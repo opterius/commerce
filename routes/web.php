@@ -142,6 +142,12 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     Route::get('/invoices/{invoice}/pay', [Client\InvoiceController::class, 'pay'])->name('invoices.pay');
     Route::post('/invoices/{invoice}/process-payment', [Client\InvoiceController::class, 'processPayment'])->name('invoices.process-payment');
 
+    // Store
+    Route::get('/store', [Client\StoreController::class, 'index'])->name('store.index');
+    Route::post('/store/promo-check', [Client\StoreController::class, 'promoCheck'])->name('store.promo-check');
+    Route::get('/store/{product:slug}', [Client\StoreController::class, 'show'])->name('store.show');
+    Route::post('/store/{product:slug}', [Client\StoreController::class, 'order'])->name('store.order');
+
     // Orders
     Route::get('/orders', [Client\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [Client\OrderController::class, 'show'])->name('orders.show');

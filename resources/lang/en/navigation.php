@@ -25,6 +25,7 @@ return [
     'tld_manager'       => 'TLD Manager',
 
     // Client portal
+    'order_services' => 'Order Services',
     'my_services' => 'My Services',
     'my_invoices' => 'My Invoices',
     'my_orders'   => 'My Orders',

@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'order_services'     => 'Order Services',
+    'prices_in'          => 'Prices shown in :currency.',
+    'change_currency'    => 'Change currency',
+    'no_products'        => 'No products are available at this time.',
+    'starting_from'      => 'Starting from',
+    'contact_for_pricing'=> 'Contact us for pricing.',
+    'order_now'          => 'Order Now',
+    'setup_fee'          => 'Setup fee',
+    'product_description'=> 'About this product',
+    'billing_cycle'      => 'Billing Cycle',
+    'options'            => 'Options',
+    'promo_code'         => 'Promo Code',
+    'enter_promo_code'   => 'Enter promo code',
+    'apply'              => 'Apply',
+    'order_summary'      => 'Order Summary',
+    'discount'           => 'Discount',
+    'total'              => 'Total',
+    'billed'             => 'Billed',
+    'place_order'        => 'Place Order',
+    'invoice_note'       => 'An invoice will be generated immediately.',
+    'order_placed'       => 'Your order has been placed successfully.',
+    'none'               => 'None',
+    'promo_check_failed' => 'Could not verify promo code. Please try again.',
+    'promo_invalid'      => 'This promo code is not valid or has expired.',
+    'promo_applied'      => 'Promo code :code applied successfully.',
+
+    'cycles' => [
+        'monthly'    => 'Monthly',
+        'quarterly'  => 'Quarterly',
+        'semi_annual'=> 'Semi-Annual',
+        'annual'     => 'Annual',
+        'biennial'   => 'Biennial',
+        'triennial'  => 'Triennial',
+    ],
+];

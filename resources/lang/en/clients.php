@@ -93,4 +93,10 @@ return [
 
     // Password
     'password_keep' => 'Leave blank to keep current password.',
+
+    // Billing preferences (client profile)
+    'billing_preferences' => 'Billing Preferences',
+    'preferred_currency'  => 'Preferred Currency',
+    'use_default'         => 'System Default',
+    'currency_note'       => 'All invoices will be issued in this currency.',
 ];

@@ -38,6 +38,24 @@
             </div>
         </div>
 
+        {{-- Billing preferences --}}
+        <div class="mt-6 bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-base font-semibold text-gray-800 mb-4">{{ __('clients.billing_preferences') }}</h3>
+            <div class="max-w-xs">
+                <label class="form-label">{{ __('clients.preferred_currency') }}</label>
+                <select name="currency_code" class="form-input">
+                    <option value="">— {{ __('clients.use_default') }} —</option>
+                    @foreach ($currencies as $currency)
+                        <option value="{{ $currency->code }}"
+                            {{ old('currency_code', $client->currency_code) === $currency->code ? 'selected' : '' }}>
+                            {{ $currency->code }} — {{ $currency->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="text-xs text-gray-400 mt-1">{{ __('clients.currency_note') }}</p>
+            </div>
+        </div>
+
         {{-- Save --}}
         <div class="mt-6 flex justify-end">
             <x-button>{{ __('common.save_changes') }}</x-button>
