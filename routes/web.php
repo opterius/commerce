@@ -13,7 +13,7 @@ Route::post('/webhooks/{gateway}', [GatewayWebhookController::class, 'handle'])
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 // ── Root redirect ────────────────────────────────────────────────────────────
-Route::get('/', fn () => redirect()->route('staff.login'));
+Route::get('/', fn () => redirect()->route('client.login'));
 
 // ── Staff Auth ───────────────────────────────────────────────────────────────
 Route::get('/admin/login', [Auth\StaffLoginController::class, 'showLoginForm'])->name('staff.login');
