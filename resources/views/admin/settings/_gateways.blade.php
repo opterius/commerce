@@ -73,7 +73,7 @@
                         </div>
                     @endforeach
 
-                    @if (in_array($slug, ['stripe', 'paypal']))
+                    @if (in_array($slug, ['stripe', 'paypal', 'mollie', 'twocheckout']))
                         <p class="text-xs text-gray-400">
                             Webhook URL:
                             <span class="font-mono select-all">{{ url('/webhooks/' . $slug) }}</span>

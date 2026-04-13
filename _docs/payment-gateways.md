@@ -275,6 +275,9 @@ The settings form is **auto-generated** from `settingsFields()` — no view file
 | Stripe        | Inline   | Yes     | Stripe Elements, saved cards, webhooks |
 | PayPal        | Inline   | Yes     | Smart Buttons (PayPal JS SDK), Orders API v2, webhooks |
 | Bank Transfer | Inline   | No      | Shows bank details + reference number; admin confirms manually |
+| Mollie        | Redirect | Yes     | Single API key, test/live determined by key prefix |
+| 2Checkout     | Redirect | Yes     | HMAC-MD5 signed URL, IPN webhook verification |
+| Authorize.net | Inline   | Yes     | Accept.js tokenization, no raw card data on server |
 
 ### PayPal setup
 
@@ -286,3 +289,33 @@ The settings form is **auto-generated** from `settingsFields()` — no view file
 ### Bank Transfer setup
 
 Fill in your bank account details under Admin → Settings → Payment Gateways → Bank Transfer. The client sees these details on the payment page along with the invoice number as the payment reference. After they submit, a pending payment is recorded and the invoice stays unpaid until you confirm manually via Admin → Invoices → Record Payment.
+
+### Mollie setup
+
+1. Create an account at [mollie.com](https://mollie.com)
+2. Go to Dashboard → Developers → API keys
+3. Copy the **Live API key** (`live_…`) for production or the **Test API key** (`test_…`) for testing
+4. Paste it into Admin → Settings → Payment Gateways → Mollie → API Key
+5. Register the webhook URL `POST /webhooks/mollie` — Mollie calls this automatically per payment; no manual registration needed (Mollie reads the `webhookUrl` from each payment request)
+
+### 2Checkout setup
+
+1. Log in to your [2Checkout (Verifone) dashboard](https://www.2checkout.com)
+2. Go to Integrations → Webhooks & API → API section
+3. Copy your **Seller ID** (numeric account number) and generate a **Secret Key**
+4. Paste both into Admin → Settings → Payment Gateways → 2Checkout
+5. In the 2Checkout dashboard under Webhooks, add `POST /webhooks/twocheckout` and enable the **Order Created** event
+6. Enable Sandbox mode for testing (uses `sandbox.2checkout.com`)
+
+### Authorize.net setup
+
+1. Log in to your [Authorize.net Merchant Interface](https://account.authorize.net)
+2. Go to Account → Settings → Security Settings → API Credentials & Keys
+   - Copy **API Login ID**
+   - Generate a new **Transaction Key**
+3. Go to Account → Settings → Security Settings → Manage Public Client Key
+   - Generate a **Public Client Key** (used by Accept.js in the browser)
+4. Paste all three values into Admin → Settings → Payment Gateways → Authorize.net
+5. Enable Sandbox mode and use the [sandbox credentials](https://developer.authorize.net/hello_world/testing_guide/) for testing
+
+> **Note:** For refunds, Authorize.net requires the last 4 digits of the card used for the original transaction. Store these in `payments.card_last_four` if your flow captures them.
