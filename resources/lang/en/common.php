@@ -104,4 +104,12 @@ return [
     'state'       => 'State',
     'postcode'    => 'Postcode',
     'country_code'=> 'Country Code',
+
+    // Staff / permissions UI
+    'you'               => 'you',
+    'never'             => 'Never',
+    'select_all'        => 'Select all',
+    'select_none'       => 'Select none',
+    'toggle'            => 'Toggle',
+    'leave_blank_to_keep' => 'leave blank to keep current',
 ];

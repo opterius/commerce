@@ -126,6 +126,9 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     // TLD Manager
     Route::resource('tlds', Admin\TldController::class)->except('show');
 
+    // Staff Management
+    Route::resource('staff', Admin\StaffController::class)->except('show');
+
     // Email Templates
     Route::resource('email-templates', Admin\EmailTemplateController::class)->except('show');
 
