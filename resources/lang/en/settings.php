@@ -67,4 +67,10 @@ return [
     'grace_period_days_hint'     => 'Days after due date before suspension',
     'auto_close_days'            => 'Auto-close After (days)',
     'auto_close_days_hint'       => 'Auto-close answered tickets with no reply after this many days',
+
+    // Payment gateways
+    'payment_gateways'           => 'Payment Gateways',
+    'enable_gateway'             => 'Enable :name',
+    'not_configured'             => 'Not Configured',
+    'stripe_webhook_url'         => 'Stripe webhook URL',
 ];

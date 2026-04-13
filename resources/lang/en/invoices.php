@@ -68,4 +68,25 @@ return [
     'method_check'         => 'Check',
     'method_other'         => 'Other',
     'method_manual'        => 'Manual',
+
+    // Gateway / payment flow
+    'already_paid'            => 'This invoice has already been paid.',
+    'no_gateways'             => 'No payment methods are currently available. Please contact support.',
+    'choose_payment_method'   => 'Choose Payment Method',
+    'payment_success'         => 'Payment successful. Thank you!',
+    'payment_failed'          => 'Payment failed. Please try again.',
+
+    // Bank Transfer
+    'bank_transfer_intro'    => 'Please transfer the exact amount to the bank account below and use your invoice number as the payment reference.',
+    'bank_name'              => 'Bank Name',
+    'account_name'           => 'Account Name',
+    'account_number'         => 'Account Number',
+    'routing_number'         => 'Routing / SWIFT',
+    'payment_reference'      => 'Payment Reference',
+    'bank_transfer_note'     => 'Your invoice will remain unpaid until we confirm receipt of the transfer. This may take 1–3 business days.',
+    'bank_transfer_confirm'  => 'I have made the transfer',
+    'bank_transfer_received' => 'Thank you. We have recorded your transfer notification and will activate your service once payment is confirmed.',
+
+    // PayPal
+    'paypal_cancel'          => 'Payment was cancelled.',
 ];

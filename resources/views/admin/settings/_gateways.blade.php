@@ -73,10 +73,10 @@
                         </div>
                     @endforeach
 
-                    @if ($slug === 'stripe')
+                    @if (in_array($slug, ['stripe', 'paypal']))
                         <p class="text-xs text-gray-400">
-                            {{ __('settings.stripe_webhook_url') }}:
-                            <span class="font-mono select-all">{{ url('/webhooks/stripe') }}</span>
+                            Webhook URL:
+                            <span class="font-mono select-all">{{ url('/webhooks/' . $slug) }}</span>
                         </p>
                     @endif
                 </div>

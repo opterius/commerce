@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Gateways\GatewayRegistry;
 use App\Gateways\Modules\BankTransferModule;
+use App\Gateways\Modules\PayPalModule;
 use App\Gateways\Modules\StripeModule;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +21,7 @@ class GatewayServiceProvider extends ServiceProvider
 
         // Built-in gateways
         $registry->register(StripeModule::class);
+        $registry->register(PayPalModule::class);
         $registry->register(BankTransferModule::class);
 
         // Third-party gateways from config

@@ -273,4 +273,16 @@ The settings form is **auto-generated** from `settingsFields()` — no view file
 | Gateway       | Flow     | Refunds | Notes |
 |---------------|----------|---------|-------|
 | Stripe        | Inline   | Yes     | Stripe Elements, saved cards, webhooks |
-| Bank Transfer | Inline   | No      | Admin confirms manually; records pending payment |
+| PayPal        | Inline   | Yes     | Smart Buttons (PayPal JS SDK), Orders API v2, webhooks |
+| Bank Transfer | Inline   | No      | Shows bank details + reference number; admin confirms manually |
+
+### PayPal setup
+
+1. Create an app at [developer.paypal.com](https://developer.paypal.com) → My Apps & Credentials
+2. Copy **Client ID** and **Client Secret** into Admin → Settings → Payment Gateways → PayPal
+3. Register the webhook URL `POST /webhooks/paypal` in your PayPal app, subscribe to `PAYMENT.CAPTURE.COMPLETED`
+4. Enable sandbox mode for testing
+
+### Bank Transfer setup
+
+Fill in your bank account details under Admin → Settings → Payment Gateways → Bank Transfer. The client sees these details on the payment page along with the invoice number as the payment reference. After they submit, a pending payment is recorded and the invoice stays unpaid until you confirm manually via Admin → Invoices → Record Payment.
