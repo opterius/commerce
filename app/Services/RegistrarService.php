@@ -5,12 +5,14 @@ namespace App\Services;
 use App\Contracts\DomainRegistrarModule;
 use App\Models\Domain;
 use App\Models\Setting;
+use App\Registrar\Modules\EnomModule;
 use App\Registrar\Modules\ResellerClubModule;
 
 class RegistrarService
 {
     private const MODULE_MAP = [
         'resellerclub' => ResellerClubModule::class,
+        'enom'         => EnomModule::class,
     ];
 
     public static function module(): DomainRegistrarModule

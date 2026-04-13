@@ -91,7 +91,7 @@ return [
     'registrar_module'       => 'Registrar Module',
     'auth_userid'            => 'Auth User ID',
     'api_key'                => 'API Key',
-    'sandbox_mode'           => 'Sandbox Mode (test.httpapi.com)',
+    'sandbox_mode'           => 'Sandbox Mode',
     'sandbox_help'           => 'Enable during testing. Disable in production.',
     'test_connection'        => 'Test Connection',
     'test_connection_help'   => 'Verify your API credentials are working correctly.',

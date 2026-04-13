@@ -101,7 +101,17 @@ class SettingsController extends Controller
 
     private function updateRegistrar(Request $request): void
     {
-        $fields = ['registrar_module', 'resellerclub_auth_userid', 'resellerclub_api_key', 'resellerclub_sandbox'];
+        $fields = [
+            'registrar_module',
+            // ResellerClub
+            'resellerclub_auth_userid',
+            'resellerclub_api_key',
+            'resellerclub_sandbox',
+            // Enom
+            'enom_uid',
+            'enom_pw',
+            'enom_sandbox',
+        ];
         foreach ($fields as $field) {
             Setting::set($field, $request->input($field, ''), 'registrar');
         }
