@@ -1,6 +1,6 @@
 # Opterius Commerce
 
-Billing and client management for hosting companies. A modern alternative to WHMCS and Blesta — built for use with [Opterius Panel](https://github.com/opterius/panel).
+Billing and client management for hosting companies. A modern, standalone alternative to WHMCS and Blesta — runs independently and integrates with [Opterius Panel](https://github.com/opterius/panel) for server provisioning.
 
 ## Features
 
