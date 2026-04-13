@@ -80,4 +80,29 @@ class Client extends Authenticatable
         return $this->hasMany(CustomFieldValue::class, 'entity_id')
             ->where('entity_type', 'client');
     }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    public function credits(): HasMany
+    {
+        return $this->hasMany(ClientCredit::class);
+    }
 }

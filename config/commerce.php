@@ -14,4 +14,12 @@ return [
 
     'pagination' => 25,
 
+    'billing' => [
+        'invoice_prefix'      => 'INV-',
+        'invoice_yearly_reset' => true,
+        'invoice_due_days'    => 7,
+        'grace_period_days'   => 5,
+        'auto_close_days'     => 5,
+    ],
+
 ];

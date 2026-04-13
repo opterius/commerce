@@ -64,6 +64,29 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     // Promo Codes
     Route::resource('promo-codes', Admin\PromoCodeController::class)->except('show');
 
+    // Orders
+    Route::get('/orders', [Admin\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
+
+    // Services
+    Route::get('/services', [Admin\ServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/{service}', [Admin\ServiceController::class, 'show'])->name('services.show');
+
+    // Invoices
+    Route::get('/invoices', [Admin\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}', [Admin\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::post('/invoices/{invoice}/void', [Admin\InvoiceController::class, 'void'])->name('invoices.void');
+    Route::post('/invoices/{invoice}/send', [Admin\InvoiceController::class, 'send'])->name('invoices.send');
+    Route::post('/invoices/{invoice}/manual-payment', [Admin\InvoiceController::class, 'manualPayment'])->name('invoices.manual-payment');
+    Route::post('/invoices/{invoice}/apply-credit', [Admin\InvoiceController::class, 'applyCredit'])->name('invoices.apply-credit');
+
+    // Payments
+    Route::get('/payments', [Admin\PaymentController::class, 'index'])->name('payments.index');
+
+    // Tax Rules
+    Route::resource('tax-rules', Admin\TaxRuleController::class);
+
     // Settings
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');
     Route::post('/settings/{category}', [Admin\SettingsController::class, 'update'])->name('settings.update');
@@ -76,6 +99,20 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     Route::get('/dashboard', [Client\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [Client\ProfileController::class, 'edit'])->name('profile');
     Route::put('/profile', [Client\ProfileController::class, 'update'])->name('profile.update');
+
+    // Services
+    Route::get('/services', [Client\ServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/{service}', [Client\ServiceController::class, 'show'])->name('services.show');
+
+    // Invoices
+    Route::get('/invoices', [Client\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}', [Client\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/pay', [Client\InvoiceController::class, 'pay'])->name('invoices.pay');
+    Route::post('/invoices/{invoice}/process-payment', [Client\InvoiceController::class, 'processPayment'])->name('invoices.process-payment');
+
+    // Orders
+    Route::get('/orders', [Client\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [Client\OrderController::class, 'show'])->name('orders.show');
 
     // Return from impersonation
     Route::post('/return-to-admin', function () {

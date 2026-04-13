@@ -9,13 +9,18 @@ return [
     'support' => 'Support',
     'tickets' => 'Tickets',
     'settings' => 'Settings',
-    'staff' => 'Staff',
+    'staff'     => 'Staff',
+    'services'  => 'Services',
+    'payments'  => 'Payments',
+    'tax_rules' => 'Tax Rules',
+    'billing'   => 'Billing',
 
     // Client portal
     'my_services' => 'My Services',
     'my_invoices' => 'My Invoices',
-    'my_tickets' => 'My Tickets',
-    'my_profile' => 'My Profile',
-    'account' => 'Account',
-    'profile' => 'Profile',
+    'my_orders'   => 'My Orders',
+    'my_tickets'  => 'My Tickets',
+    'my_profile'  => 'My Profile',
+    'account'     => 'Account',
+    'profile'     => 'Profile',
 ];

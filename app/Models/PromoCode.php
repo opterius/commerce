@@ -36,6 +36,11 @@ class PromoCode extends Model
         return $this->belongsToMany(Product::class, 'promo_code_product');
     }
 
+    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function isValid(): bool
     {
         if (!$this->is_active) return false;
