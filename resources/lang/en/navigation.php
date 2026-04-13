@@ -18,6 +18,9 @@ return [
     'server_groups'     => 'Server Groups',
     'servers'           => 'Servers',
     'provisioning_log'  => 'Provisioning Log',
+    'support'           => 'Support',
+    'ticket_departments'=> 'Departments',
+    'canned_responses'  => 'Canned Responses',
 
     // Client portal
     'my_services' => 'My Services',

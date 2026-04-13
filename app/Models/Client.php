@@ -105,4 +105,9 @@ class Client extends Authenticatable
     {
         return $this->hasMany(ClientCredit::class);
     }
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }

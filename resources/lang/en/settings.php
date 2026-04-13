@@ -51,6 +51,7 @@ return [
     'nav_branding'   => 'Branding',
     'nav_currencies' => 'Currencies',
     'nav_billing'    => 'Billing',
+    'nav_tickets'    => 'Tickets',
 
     // Billing
     'billing'                    => 'Billing',

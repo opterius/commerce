@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\{Invoice, Product, Service};
 use App\Services\ProvisioningService;
-use App\Support\ActivityLogger;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller

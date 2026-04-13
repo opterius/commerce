@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ServerGroup;
-use App\Support\ActivityLogger;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 
 class ServerGroupController extends Controller

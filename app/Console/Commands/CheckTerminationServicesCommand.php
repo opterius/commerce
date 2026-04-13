@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\TerminateHostingAccountJob;
 use App\Models\Service;
-use App\Support\ActivityLogger;
+use App\Services\ActivityLogger;
 use Illuminate\Console\Command;
 
 class CheckTerminationServicesCommand extends Command

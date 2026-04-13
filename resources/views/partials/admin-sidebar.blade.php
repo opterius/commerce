@@ -81,15 +81,26 @@
     </div>
 </div>
 
-{{-- Support > Tickets --}}
-<x-sidebar-link href="#" :disabled="true">
-    <x-slot:icon>
-        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-        </svg>
-    </x-slot:icon>
-    {{ __('navigation.tickets') }}
-</x-sidebar-link>
+{{-- Support (dropdown) --}}
+@php
+    $supportActive = request()->routeIs('admin.tickets*', 'admin.ticket-departments*', 'admin.canned-responses*');
+@endphp
+<div x-data="{ open: {{ $supportActive ? 'true' : 'false' }} }">
+    <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition {{ $supportActive ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+        <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+            </svg>
+            {{ __('navigation.support') }}
+        </span>
+        <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </button>
+    <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1">
+        <a href="{{ route('admin.tickets.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.tickets.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.tickets') }}</a>
+        <a href="{{ route('admin.ticket-departments.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.ticket-departments.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.ticket_departments') }}</a>
+        <a href="{{ route('admin.canned-responses.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.canned-responses.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.canned_responses') }}</a>
+    </div>
+</div>
 
 {{-- Divider --}}
 <div class="my-4 border-t border-gray-800"></div>

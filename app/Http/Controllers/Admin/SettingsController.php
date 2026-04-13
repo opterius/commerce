@@ -21,9 +21,17 @@ class SettingsController extends Controller
     public function update(Request $request, string $category)
     {
         match ($category) {
-            'company' => $this->updateCompany($request),
-            'branding' => $this->updateBranding($request),
+            'company'    => $this->updateCompany($request),
+            'branding'   => $this->updateBranding($request),
             'currencies' => $this->updateCurrency($request),
+            'billing'    => $this->updateGenericGroup($request, 'billing', [
+                'invoice_prefix', 'invoice_due_days', 'grace_period_days',
+                'auto_close_days', 'invoice_yearly_reset',
+            ]),
+            'tickets'    => $this->updateGenericGroup($request, 'tickets', [
+                'ticket_auto_close_days', 'ticket_default_priority',
+                'ticket_max_attachment_kb', 'ticket_allowed_extensions',
+            ]),
             default => abort(404),
         };
 
@@ -87,6 +95,13 @@ class SettingsController extends Controller
         if ($request->boolean('is_default')) {
             Currency::where('id', '!=', $currency->id)->update(['is_default' => false]);
             $currency->update(['is_default' => true]);
+        }
+    }
+
+    private function updateGenericGroup(Request $request, string $group, array $fields): void
+    {
+        foreach ($fields as $field) {
+            Setting::set($field, $request->input($field, ''), $group);
         }
     }
 

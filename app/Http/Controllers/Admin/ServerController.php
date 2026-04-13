@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Server;
 use App\Models\ServerGroup;
 use App\Provisioning\Modules\OpteriusPanelModule;
-use App\Support\ActivityLogger;
+use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 
 class ServerController extends Controller

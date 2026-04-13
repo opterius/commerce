@@ -95,6 +95,16 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     Route::get('/provisioning-log', [Admin\ProvisioningLogController::class, 'index'])->name('provisioning-log.index');
     Route::get('/provisioning-log/{provisioningLog}', [Admin\ProvisioningLogController::class, 'show'])->name('provisioning-log.show');
 
+    // Support Tickets
+    Route::get('/tickets', [Admin\TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/{ticket}', [Admin\TicketController::class, 'show'])->name('tickets.show');
+    Route::post('/tickets/{ticket}/reply', [Admin\TicketController::class, 'reply'])->name('tickets.reply');
+    Route::patch('/tickets/{ticket}', [Admin\TicketController::class, 'update'])->name('tickets.update');
+    Route::post('/tickets/{ticket}/merge', [Admin\TicketController::class, 'merge'])->name('tickets.merge');
+    Route::get('/tickets/{ticket}/attachments/{attachment}', [Admin\TicketController::class, 'downloadAttachment'])->name('tickets.attachment');
+    Route::resource('ticket-departments', Admin\TicketDepartmentController::class)->except('show');
+    Route::resource('canned-responses', Admin\CannedResponseController::class)->except('show');
+
     // Settings
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');
     Route::post('/settings/{category}', [Admin\SettingsController::class, 'update'])->name('settings.update');
@@ -121,6 +131,15 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     // Orders
     Route::get('/orders', [Client\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [Client\OrderController::class, 'show'])->name('orders.show');
+
+    // Tickets
+    Route::get('/tickets', [Client\TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/create', [Client\TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets', [Client\TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/{ticket}', [Client\TicketController::class, 'show'])->name('tickets.show');
+    Route::post('/tickets/{ticket}/reply', [Client\TicketController::class, 'reply'])->name('tickets.reply');
+    Route::patch('/tickets/{ticket}/close', [Client\TicketController::class, 'close'])->name('tickets.close');
+    Route::get('/tickets/{ticket}/attachments/{attachment}', [Client\TicketController::class, 'downloadAttachment'])->name('tickets.attachment');
 
     // Return from impersonation
     Route::post('/return-to-admin', function () {
