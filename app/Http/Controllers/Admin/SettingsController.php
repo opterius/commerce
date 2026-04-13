@@ -111,6 +111,10 @@ class SettingsController extends Controller
             'enom_uid',
             'enom_pw',
             'enom_sandbox',
+            // OpenSRS
+            'opensrs_username',
+            'opensrs_private_key',
+            'opensrs_sandbox',
         ];
         foreach ($fields as $field) {
             Setting::set($field, $request->input($field, ''), 'registrar');

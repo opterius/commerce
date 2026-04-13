@@ -14,6 +14,7 @@
                     <select name="registrar_module" x-model="module" class="form-input w-64">
                         <option value="resellerclub">ResellerClub (LogicBoxes)</option>
                         <option value="enom">Enom (Tucows)</option>
+                        <option value="opensrs">OpenSRS (Tucows)</option>
                     </select>
                 </div>
 
@@ -65,6 +66,32 @@
                             Sandbox Mode (resellertest.enom.com)
                         </label>
                         <p class="mt-1 text-xs text-gray-400">Routes API calls to the Enom test environment. Disable in production.</p>
+                    </div>
+                </div>
+
+                {{-- OpenSRS credentials --}}
+                <div x-show="module === 'opensrs'" x-cloak class="space-y-4 border border-gray-100 rounded-lg p-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">OpenSRS API Credentials</p>
+
+                    <div>
+                        <x-input name="opensrs_username" label="OpenSRS Username"
+                            :value="$settings['opensrs_username'] ?? ''" placeholder="your-opensrs-username" />
+                        <p class="mt-1 text-xs text-gray-400">Your OpenSRS reseller account username.</p>
+                    </div>
+
+                    <div>
+                        <x-input name="opensrs_private_key" label="OpenSRS Private Key"
+                            :value="$settings['opensrs_private_key'] ?? ''" placeholder="your-private-key" />
+                        <p class="mt-1 text-xs text-gray-400">Found in your OpenSRS reseller control panel under Profile → API Access.</p>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <input type="checkbox" name="opensrs_sandbox" value="1"
+                                {{ ($settings['opensrs_sandbox'] ?? '1') ? 'checked' : '' }} class="rounded">
+                            Sandbox Mode (horizon.opensrs.net)
+                        </label>
+                        <p class="mt-1 text-xs text-gray-400">Routes API calls to the OpenSRS test environment. Disable in production.</p>
                     </div>
                 </div>
 
