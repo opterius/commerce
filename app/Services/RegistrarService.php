@@ -6,6 +6,7 @@ use App\Contracts\DomainRegistrarModule;
 use App\Models\Domain;
 use App\Models\Setting;
 use App\Registrar\Modules\EnomModule;
+use App\Registrar\Modules\NamecheapModule;
 use App\Registrar\Modules\OpenSrsModule;
 use App\Registrar\Modules\ResellerClubModule;
 
@@ -15,6 +16,7 @@ class RegistrarService
         'resellerclub' => ResellerClubModule::class,
         'enom'         => EnomModule::class,
         'opensrs'      => OpenSrsModule::class,
+        'namecheap'    => NamecheapModule::class,
     ];
 
     public static function module(): DomainRegistrarModule

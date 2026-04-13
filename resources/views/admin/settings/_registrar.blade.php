@@ -15,6 +15,7 @@
                         <option value="resellerclub">ResellerClub (LogicBoxes)</option>
                         <option value="enom">Enom (Tucows)</option>
                         <option value="opensrs">OpenSRS (Tucows)</option>
+                        <option value="namecheap">Namecheap</option>
                     </select>
                 </div>
 
@@ -92,6 +93,38 @@
                             Sandbox Mode (horizon.opensrs.net)
                         </label>
                         <p class="mt-1 text-xs text-gray-400">Routes API calls to the OpenSRS test environment. Disable in production.</p>
+                    </div>
+                </div>
+
+                {{-- Namecheap credentials --}}
+                <div x-show="module === 'namecheap'" x-cloak class="space-y-4 border border-gray-100 rounded-lg p-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Namecheap API Credentials</p>
+
+                    <div>
+                        <x-input name="namecheap_api_user" label="API Username"
+                            :value="$settings['namecheap_api_user'] ?? ''" placeholder="your-namecheap-username" />
+                        <p class="mt-1 text-xs text-gray-400">Your Namecheap account username (same as login).</p>
+                    </div>
+
+                    <div>
+                        <x-input name="namecheap_api_key" label="API Key"
+                            :value="$settings['namecheap_api_key'] ?? ''" placeholder="your-api-key" />
+                        <p class="mt-1 text-xs text-gray-400">Found in Profile → Tools → API Access. Must be enabled and your server IP whitelisted.</p>
+                    </div>
+
+                    <div>
+                        <x-input name="namecheap_client_ip" label="Server IP Address"
+                            :value="$settings['namecheap_client_ip'] ?? ''" placeholder="1.2.3.4" />
+                        <p class="mt-1 text-xs text-gray-400">Your server's public IP. Must be whitelisted in your Namecheap account under API Access.</p>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <input type="checkbox" name="namecheap_sandbox" value="1"
+                                {{ ($settings['namecheap_sandbox'] ?? '1') ? 'checked' : '' }} class="rounded">
+                            Sandbox Mode (api.sandbox.namecheap.com)
+                        </label>
+                        <p class="mt-1 text-xs text-gray-400">Routes API calls to the Namecheap test environment. Disable in production.</p>
                     </div>
                 </div>
 

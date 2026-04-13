@@ -115,6 +115,11 @@ class SettingsController extends Controller
             'opensrs_username',
             'opensrs_private_key',
             'opensrs_sandbox',
+            // Namecheap
+            'namecheap_api_user',
+            'namecheap_api_key',
+            'namecheap_client_ip',
+            'namecheap_sandbox',
         ];
         foreach ($fields as $field) {
             Setting::set($field, $request->input($field, ''), 'registrar');
