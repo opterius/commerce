@@ -1,0 +1,54 @@
+Tier 1 — Must Have
+Enom
+
+Owned by Tucows. Huge in the hosting industry — more WHMCS shops run Enom than any other.
+API: XML over HTTPS. Clunky but well-documented.
+Auth: uid + pw query params.
+Sandbox: resellertest.enom.com
+WHMCS supports: yes (official module)
+
+
+OpenSRS (Tucows)
+
+The wholesale/white-label arm of Tucows. Different from Enom — targets larger resellers.
+API: XML-RPC with HMAC-MD5 signature per request. More complex than ResellerClub.
+Wide TLD coverage, competitive pricing.
+WHMCS supports: yes (official module)
+
+
+Namecheap
+
+Very popular for resellers. Clean JSON API, good docs.
+Auth: ApiUser + ApiKey + ClientIp (IP whitelist required — annoying).
+Sandbox: sandbox.namecheap.com
+WHMCS supports: yes (official module)
+
+
+
+Tier 2 — High Value
+
+CentralNic Reseller (formerly Hexonet / 1API)
+
+Same parent as CentralNic. Very wide TLD catalog including new gTLDs (.shop, .online, .tech etc.) that ResellerClub is weaker on.
+HTTP API (similar pattern to ResellerClub — key=value params, plain text response).
+Sandbox: api.1api.net (free test account)
+WHMCS supports: yes (official module)
+
+
+Internet.bs
+
+Popular with smaller European hosts. Simple REST-ish API.
+Auth: ApiKey + Password query params.
+No sandbox — they give you a test balance instead.
+
+
+
+Tier 3 — Regional / Niche
+
+INWX — dominant in Germany/Austria/Switzerland. SOAP/XML-RPC API. If you want European hosting companies as customers.
+
+Gandi — France-based, strong in Europe. Modern REST API with OAuth.
+
+Dynadot — US reseller, growing. Simple XML API.
+
+Porkbun — Modern JSON REST API. Small but growing developer-friendly user base.

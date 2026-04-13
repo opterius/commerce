@@ -14,6 +14,15 @@ return [
 
     'pagination' => 25,
 
+    /*
+     | Third-party gateway module classes.
+     | Each class must implement App\Gateways\Contracts\PaymentGatewayModule.
+     | Built-in gateways (Stripe, Bank Transfer) are registered automatically.
+     */
+    'gateway_modules' => [
+        // \MyVendor\MyGateway\MyGatewayModule::class,
+    ],
+
     'billing' => [
         'invoice_prefix'       => 'INV-',
         'invoice_yearly_reset' => true,

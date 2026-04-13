@@ -5,6 +5,13 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\Client;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Webhook\GatewayWebhookController;
+
+// ── Gateway Webhooks (public, no auth, no CSRF) ──────────────────────────────
+Route::post('/webhooks/{gateway}', [GatewayWebhookController::class, 'handle'])
+    ->name('webhooks.gateway')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+
 // ── Root redirect ────────────────────────────────────────────────────────────
 Route::get('/', fn () => redirect()->route('staff.login'));
 
@@ -142,8 +149,8 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     // Invoices
     Route::get('/invoices', [Client\InvoiceController::class, 'index'])->name('invoices.index');
     Route::get('/invoices/{invoice}', [Client\InvoiceController::class, 'show'])->name('invoices.show');
-    Route::get('/invoices/{invoice}/pay', [Client\InvoiceController::class, 'pay'])->name('invoices.pay');
-    Route::post('/invoices/{invoice}/process-payment', [Client\InvoiceController::class, 'processPayment'])->name('invoices.process-payment');
+    Route::get('/invoices/{invoice}/pay/{gateway?}', [Client\InvoiceController::class, 'pay'])->name('invoices.pay');
+    Route::post('/invoices/{invoice}/pay/{gateway}', [Client\InvoiceController::class, 'processPayment'])->name('invoices.process-payment');
 
     // Store
     Route::get('/store', [Client\StoreController::class, 'index'])->name('store.index');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Gateways\GatewayRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use App\Models\Setting;
@@ -12,10 +13,11 @@ class SettingsController extends Controller
 {
     public function index(string $category = 'company')
     {
-        $settings = Setting::getGroup($category);
-        $currencies = Currency::orderBy('is_default', 'desc')->orderBy('name')->get();
+        $settings    = Setting::getGroup($category);
+        $currencies  = Currency::orderBy('is_default', 'desc')->orderBy('name')->get();
+        $allGateways = app(GatewayRegistry::class)->all();
 
-        return view('admin.settings.index', compact('category', 'settings', 'currencies'));
+        return view('admin.settings.index', compact('category', 'settings', 'currencies', 'allGateways'));
     }
 
     public function update(Request $request, string $category)
@@ -33,6 +35,7 @@ class SettingsController extends Controller
                 'ticket_max_attachment_kb', 'ticket_allowed_extensions',
             ]),
             'registrar'  => $this->updateRegistrar($request),
+            'gateways'   => $this->updateGateways($request),
             default => abort(404),
         };
 
@@ -127,6 +130,29 @@ class SettingsController extends Controller
         ];
         foreach ($fields as $field) {
             Setting::set($field, $request->input($field, ''), 'registrar');
+        }
+    }
+
+    private function updateGateways(Request $request): void
+    {
+        $slug    = $request->input('gateway_slug');
+        $gateway = app(GatewayRegistry::class)->get($slug);
+
+        // Save the enabled toggle
+        Setting::set(
+            "gateway_{$slug}_enabled",
+            $request->boolean("gateway_{$slug}_enabled") ? '1' : '0',
+            'gateways'
+        );
+
+        // Save each declared settings field
+        foreach ($gateway->settingsFields() as $field) {
+            $inputKey = "gateway_{$slug}_{$field['key']}";
+            if ($request->has($inputKey)) {
+                Setting::set($inputKey, $request->input($inputKey, ''), 'gateways');
+            } elseif ($field['type'] === 'toggle') {
+                Setting::set($inputKey, '0', 'gateways');
+            }
         }
     }
 

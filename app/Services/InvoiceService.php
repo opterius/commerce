@@ -176,6 +176,22 @@ class InvoiceService
         return $invoice;
     }
 
+    public function recordGatewayPayment(Invoice $invoice, string $gateway, \App\Gateways\Contracts\GatewayResult $result): void
+    {
+        Payment::create([
+            'invoice_id'      => $invoice->id,
+            'gateway'         => $gateway,
+            'transaction_id'  => $result->transactionId,
+            'amount'          => $invoice->amount_due,
+            'currency_code'   => $invoice->currency_code,
+            'status'          => 'completed',
+            'method'          => $gateway,
+            'gateway_response'=> $result->gatewayResponse,
+        ]);
+
+        $this->reconcileInvoice($invoice);
+    }
+
     public function recordManualPayment(Invoice $invoice, array $data, Staff $staff): Payment
     {
         $payment = Payment::create([
