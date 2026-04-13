@@ -105,6 +105,20 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     Route::resource('ticket-departments', Admin\TicketDepartmentController::class)->except('show');
     Route::resource('canned-responses', Admin\CannedResponseController::class)->except('show');
 
+    // Domains (admin)
+    Route::get('/domains', [Admin\DomainController::class, 'index'])->name('domains.index');
+    Route::get('/domains/{domain}', [Admin\DomainController::class, 'show'])->name('domains.show');
+    Route::patch('/domains/{domain}/nameservers', [Admin\DomainController::class, 'updateNameservers'])->name('domains.nameservers');
+    Route::patch('/domains/{domain}/privacy', [Admin\DomainController::class, 'togglePrivacy'])->name('domains.privacy');
+    Route::patch('/domains/{domain}/lock', [Admin\DomainController::class, 'toggleLock'])->name('domains.lock');
+    Route::post('/domains/{domain}/epp', [Admin\DomainController::class, 'getEppCode'])->name('domains.epp');
+    Route::post('/domains/{domain}/sync', [Admin\DomainController::class, 'sync'])->name('domains.sync');
+    Route::patch('/domains/{domain}/notes', [Admin\DomainController::class, 'updateNotes'])->name('domains.notes');
+    Route::post('/domains/test-connection', [Admin\DomainController::class, 'testConnection'])->name('domains.test-connection');
+
+    // TLD Manager
+    Route::resource('tlds', Admin\TldController::class)->except('show');
+
     // Settings
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');
     Route::post('/settings/{category}', [Admin\SettingsController::class, 'update'])->name('settings.update');
@@ -131,6 +145,17 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     // Orders
     Route::get('/orders', [Client\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [Client\OrderController::class, 'show'])->name('orders.show');
+
+    // Domains (client)
+    Route::get('/domains', [Client\DomainController::class, 'index'])->name('domains.index');
+    Route::get('/domains/search', [Client\DomainController::class, 'search'])->name('domains.search');
+    Route::get('/domains/register', [Client\DomainController::class, 'register'])->name('domains.register');
+    Route::post('/domains', [Client\DomainController::class, 'store'])->name('domains.store');
+    Route::get('/domains/{domain}', [Client\DomainController::class, 'show'])->name('domains.show');
+    Route::patch('/domains/{domain}/nameservers', [Client\DomainController::class, 'updateNameservers'])->name('domains.nameservers');
+    Route::patch('/domains/{domain}/privacy', [Client\DomainController::class, 'togglePrivacy'])->name('domains.privacy');
+    Route::patch('/domains/{domain}/auto-renew', [Client\DomainController::class, 'toggleAutoRenew'])->name('domains.auto-renew');
+    Route::post('/domains/{domain}/epp', [Client\DomainController::class, 'requestEppCode'])->name('domains.epp');
 
     // Tickets
     Route::get('/tickets', [Client\TicketController::class, 'index'])->name('tickets.index');

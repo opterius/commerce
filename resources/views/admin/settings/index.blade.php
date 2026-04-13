@@ -7,7 +7,7 @@
         {{-- Settings navigation --}}
         <div class="w-full lg:w-56 flex-shrink-0">
             <nav class="bg-white rounded-xl shadow-sm p-2 space-y-1">
-                @foreach (['company', 'branding', 'currencies', 'billing', 'tickets'] as $cat)
+                @foreach (['company', 'branding', 'currencies', 'billing', 'tickets', 'registrar'] as $cat)
                     <a
                         href="{{ route('admin.settings', $cat) }}"
                         class="block px-4 py-2.5 rounded-lg text-sm font-medium transition {{ $category === $cat ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50' }}"
@@ -30,6 +30,8 @@
                 @include('admin.settings._billing')
             @elseif ($category === 'tickets')
                 @include('admin.settings._tickets')
+            @elseif ($category === 'registrar')
+                @include('admin.settings._registrar')
             @endif
         </div>
     </div>

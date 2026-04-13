@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Jobs\CreateHostingAccountJob;
+use App\Jobs\RegisterDomainJob;
+use App\Jobs\RenewDomainJob;
 use App\Jobs\UnsuspendHostingAccountJob;
-use App\Models\{Client, ClientCredit, Invoice, InvoiceItem, Order, Payment, Service, Staff};
+use App\Models\{Client, ClientCredit, Domain, Invoice, InvoiceItem, Order, Payment, Service, Setting, Staff};
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
@@ -65,6 +67,39 @@ class InvoiceService
         }
 
         $order->update(['invoice_id' => $invoice->id]);
+
+        return $invoice;
+    }
+
+    public function createForDomainRenewal(Domain $domain): Invoice
+    {
+        $domain->loadMissing('client');
+
+        $dueDays     = (int) Setting::get('invoice_due_days', '7');
+        $dueDate     = now()->addDays($dueDays)->toDateString();
+        $years       = $domain->registrationYears();
+        $description = 'Domain Renewal: ' . $domain->domain_name . ' (' . $years . ' year' . ($years > 1 ? 's' : '') . ')';
+
+        $invoice = Invoice::create([
+            'client_id'      => $domain->client_id,
+            'invoice_number' => $this->generateInvoiceNumber(),
+            'status'         => 'unpaid',
+            'due_date'       => $dueDate,
+            'currency_code'  => $domain->currency_code,
+            'subtotal'       => $domain->amount,
+            'tax'            => 0,
+            'total'          => $domain->amount,
+            'credit_applied' => 0,
+        ]);
+
+        InvoiceItem::create([
+            'invoice_id'  => $invoice->id,
+            'domain_id'   => $domain->id,
+            'description' => $description,
+            'amount'      => $domain->amount,
+            'tax_amount'  => 0,
+            'quantity'    => 1,
+        ]);
 
         return $invoice;
     }
@@ -135,6 +170,7 @@ class InvoiceService
             if ($order && $order->status === 'pending') {
                 $order->update(['status' => 'active']);
 
+                // Hosting services
                 $pendingServices = Service::where('order_id', $order->id)
                     ->where('status', 'pending')
                     ->with('product')
@@ -142,13 +178,32 @@ class InvoiceService
 
                 foreach ($pendingServices as $service) {
                     if ($service->needsProvisioning()) {
-                        // Queue provisioning; job will set status to active on success
                         CreateHostingAccountJob::dispatch($service->id);
                     } else {
                         $service->update(['status' => 'active', 'registration_date' => now()->toDateString()]);
                     }
                 }
+
+                // Domain registrations
+                $pendingDomains = Domain::where('order_id', $order->id)
+                    ->where('status', 'pending')
+                    ->get();
+
+                foreach ($pendingDomains as $domain) {
+                    RegisterDomainJob::dispatch($domain->id);
+                }
             }
+        }
+
+        // Domain renewals linked to this invoice
+        $domainIds = $invoice->items()
+            ->where('description', 'like', 'Domain Renewal:%')
+            ->pluck('domain_id')
+            ->filter()
+            ->unique();
+
+        foreach ($domainIds as $domainId) {
+            RenewDomainJob::dispatch($domainId);
         }
 
         // Unsuspend suspended services linked to this invoice's items

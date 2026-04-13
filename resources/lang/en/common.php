@@ -87,4 +87,21 @@ return [
     'apply'       => 'Apply',
     'default'     => 'Default',
     'deleted'     => '(deleted)',
+
+    // Toggle labels
+    'on'          => 'On',
+    'off'         => 'Off',
+    'enabled'     => 'Enabled',
+    'disabled'    => 'Disabled',
+    'manage'      => 'Manage',
+    'clear'       => 'Clear',
+    'company'     => 'Company',
+    'first_name'  => 'First Name',
+    'last_name'   => 'Last Name',
+    'address_1'   => 'Address Line 1',
+    'address_2'   => 'Address Line 2',
+    'city'        => 'City',
+    'state'       => 'State',
+    'postcode'    => 'Postcode',
+    'country_code'=> 'Country Code',
 ];

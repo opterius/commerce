@@ -21,12 +21,15 @@ return [
     'support'           => 'Support',
     'ticket_departments'=> 'Departments',
     'canned_responses'  => 'Canned Responses',
+    'domains'           => 'Domains',
+    'tld_manager'       => 'TLD Manager',
 
     // Client portal
     'my_services' => 'My Services',
     'my_invoices' => 'My Invoices',
     'my_orders'   => 'My Orders',
     'my_tickets'  => 'My Tickets',
+    'my_domains'  => 'My Domains',
     'my_profile'  => 'My Profile',
     'account'     => 'Account',
     'profile'     => 'Profile',

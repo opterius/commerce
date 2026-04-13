@@ -32,6 +32,7 @@ class SettingsController extends Controller
                 'ticket_auto_close_days', 'ticket_default_priority',
                 'ticket_max_attachment_kb', 'ticket_allowed_extensions',
             ]),
+            'registrar'  => $this->updateRegistrar($request),
             default => abort(404),
         };
 
@@ -95,6 +96,14 @@ class SettingsController extends Controller
         if ($request->boolean('is_default')) {
             Currency::where('id', '!=', $currency->id)->update(['is_default' => false]);
             $currency->update(['is_default' => true]);
+        }
+    }
+
+    private function updateRegistrar(Request $request): void
+    {
+        $fields = ['registrar_module', 'resellerclub_auth_userid', 'resellerclub_api_key', 'resellerclub_sandbox'];
+        foreach ($fields as $field) {
+            Setting::set($field, $request->input($field, ''), 'registrar');
         }
     }
 

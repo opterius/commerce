@@ -52,6 +52,7 @@ return [
     'nav_currencies' => 'Currencies',
     'nav_billing'    => 'Billing',
     'nav_tickets'    => 'Tickets',
+    'nav_registrar'  => 'Registrar',
 
     // Billing
     'billing'                    => 'Billing',
