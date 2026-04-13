@@ -6,7 +6,7 @@ use App\Jobs\CreateHostingAccountJob;
 use App\Jobs\RegisterDomainJob;
 use App\Jobs\RenewDomainJob;
 use App\Jobs\UnsuspendHostingAccountJob;
-use App\Models\{Client, ClientCredit, Domain, Invoice, InvoiceItem, Order, Payment, Service, Setting, Staff};
+use App\Models\{Client, ClientCredit, Currency, Domain, Invoice, InvoiceItem, Order, Payment, Product, Service, Setting, Staff};
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
@@ -104,6 +104,45 @@ class InvoiceService
         return $invoice;
     }
 
+    /**
+     * Generate a renewal invoice for an active service.
+     * Uses the service's stored amount/currency so the price is locked at what
+     * the client originally agreed to (admin can override on the service record).
+     */
+    public function createForServiceRenewal(Service $service): Invoice
+    {
+        $service->loadMissing(['client', 'product']);
+
+        $dueDays     = (int) Setting::get('invoice_due_days', '7');
+        $dueDate     = now()->addDays($dueDays)->toDateString();
+        $cycleLabel  = ucfirst(str_replace('_', ' ', $service->billing_cycle));
+        $description = ($service->product?->name ?? 'Service') . ' — ' . $cycleLabel
+                     . ($service->domain ? ' (' . $service->domain . ')' : '');
+
+        $invoice = Invoice::create([
+            'client_id'      => $service->client_id,
+            'invoice_number' => $this->generateInvoiceNumber(),
+            'status'         => 'unpaid',
+            'due_date'       => $dueDate,
+            'currency_code'  => $service->currency_code,
+            'subtotal'       => $service->amount,
+            'tax'            => 0,
+            'total'          => $service->amount,
+            'credit_applied' => 0,
+        ]);
+
+        InvoiceItem::create([
+            'invoice_id'  => $invoice->id,
+            'service_id'  => $service->id,
+            'description' => $description,
+            'amount'      => $service->amount,
+            'tax_amount'  => 0,
+            'quantity'    => 1,
+        ]);
+
+        return $invoice;
+    }
+
     public function createManual(Client $client, array $lineItems, string $currencyCode, string $dueDate, ?string $notes = null): Invoice
     {
         $subtotal = 0;
@@ -164,6 +203,9 @@ class InvoiceService
     {
         $invoice->update(['status' => 'paid', 'paid_date' => now()]);
 
+        // Send payment confirmation email
+        app(EmailService::class)->sendInvoicePaid($invoice);
+
         // Activate pending order if any
         if ($invoice->orders()->exists()) {
             $order = $invoice->orders()->first();
@@ -206,27 +248,51 @@ class InvoiceService
             RenewDomainJob::dispatch($domainId);
         }
 
-        // Unsuspend suspended services linked to this invoice's items
-        $suspendedServiceIds = $invoice->items()
+        // Renewal invoice paid: advance next_due_date for linked active/suspended services
+        $renewalServiceIds = $invoice->items()
             ->whereNotNull('service_id')
             ->pluck('service_id')
             ->unique();
 
-        if ($suspendedServiceIds->isNotEmpty()) {
-            Service::whereIn('id', $suspendedServiceIds)
-                ->where('status', 'suspended')
-                ->with('product')
+        if ($renewalServiceIds->isNotEmpty()) {
+            Service::whereIn('id', $renewalServiceIds)
+                ->whereIn('status', ['active', 'suspended'])
                 ->get()
                 ->each(function (Service $service) {
-                    if ($service->needsProvisioning()) {
-                        UnsuspendHostingAccountJob::dispatch($service->id);
-                    } else {
-                        $service->update(['status' => 'active', 'suspended_at' => null]);
+                    $next = $this->advanceNextDueDate($service);
+                    $service->update([
+                        'last_due_date' => $service->next_due_date,
+                        'next_due_date' => $next,
+                    ]);
+
+                    // Unsuspend if suspended
+                    if ($service->status === 'suspended') {
+                        if ($service->needsProvisioning()) {
+                            UnsuspendHostingAccountJob::dispatch($service->id);
+                        } else {
+                            $service->update(['status' => 'active', 'suspended_at' => null]);
+                            app(EmailService::class)->sendServiceUnsuspended($service);
+                        }
                     }
                 });
         }
 
         ActivityLogger::log('invoice.paid', 'invoice', $invoice->id, $invoice->invoice_number);
+    }
+
+    private function advanceNextDueDate(Service $service): string
+    {
+        $base = $service->next_due_date ?? now();
+
+        return match ($service->billing_cycle) {
+            'monthly'     => $base->addMonth()->toDateString(),
+            'quarterly'   => $base->addMonths(3)->toDateString(),
+            'semi_annual' => $base->addMonths(6)->toDateString(),
+            'annual'      => $base->addYear()->toDateString(),
+            'biennial'    => $base->addYears(2)->toDateString(),
+            'triennial'   => $base->addYears(3)->toDateString(),
+            default       => $base->addMonth()->toDateString(),
+        };
     }
 
     public function applyCredit(Invoice $invoice, int $amountCents): void

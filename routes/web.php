@@ -119,6 +119,9 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     // TLD Manager
     Route::resource('tlds', Admin\TldController::class)->except('show');
 
+    // Email Templates
+    Route::resource('email-templates', Admin\EmailTemplateController::class)->except('show');
+
     // Settings
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');
     Route::post('/settings/{category}', [Admin\SettingsController::class, 'update'])->name('settings.update');

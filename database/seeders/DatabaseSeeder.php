@@ -70,5 +70,7 @@ class DatabaseSeeder extends Seeder
         foreach ($brandingDefaults as $key => $value) {
             Setting::set($key, $value, 'branding');
         }
+
+        $this->call(EmailTemplateSeeder::class);
     }
 }
