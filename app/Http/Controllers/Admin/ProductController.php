@@ -8,6 +8,7 @@ use App\Models\Currency;
 use App\Models\Product;
 use App\Models\ProductGroup;
 use App\Models\ProductPricing;
+use App\Models\ServerGroup;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 
@@ -41,15 +42,17 @@ class ProductController extends Controller
 
     public function create()
     {
-        $groups = ProductGroup::orderBy('sort_order')->get();
-        $currencies = Currency::where('is_active', true)->get();
-        $optionGroups = ConfigurableOptionGroup::orderBy('name')->get();
+        $groupOptions   = ProductGroup::orderBy('sort_order')->pluck('name', 'id');
+        $currencies     = Currency::where('is_active', true)->get();
+        $optionGroups   = ConfigurableOptionGroup::orderBy('name')->get();
+        $serverGroups   = ServerGroup::where('is_active', true)->orderBy('name')->get();
 
         return view('admin.products.create', [
-            'groups' => $groups,
-            'currencies' => $currencies,
-            'optionGroups' => $optionGroups,
+            'groupOptions'  => $groupOptions,
+            'currencies'    => $currencies,
+            'optionGroups'  => $optionGroups,
             'billingCycles' => self::BILLING_CYCLES,
+            'serverGroups'  => $serverGroups,
         ]);
     }
 
@@ -62,11 +65,13 @@ class ProductController extends Controller
             'description' => ['nullable', 'string'],
             'type' => ['required', 'in:hosting,other'],
             'status' => ['required', 'in:active,hidden,retired'],
-            'provisioning_module' => ['nullable', 'string'],
-            'stock_control' => ['nullable', 'boolean'],
-            'qty_in_stock' => ['nullable', 'integer', 'min:0'],
-            'require_domain' => ['nullable', 'boolean'],
-            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'provisioning_module'  => ['nullable', 'string'],
+            'server_group_id'      => ['nullable', 'exists:server_groups,id'],
+            'provisioning_package' => ['nullable', 'string', 'max:255'],
+            'stock_control'        => ['nullable', 'boolean'],
+            'qty_in_stock'         => ['nullable', 'integer', 'min:0'],
+            'require_domain'       => ['nullable', 'boolean'],
+            'sort_order'           => ['nullable', 'integer', 'min:0'],
         ]);
 
         $validated['stock_control'] = $request->boolean('stock_control');
@@ -103,16 +108,18 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $product->load('pricing', 'configurableOptionGroups');
-        $groups = ProductGroup::orderBy('sort_order')->get();
-        $currencies = Currency::where('is_active', true)->get();
-        $optionGroups = ConfigurableOptionGroup::orderBy('name')->get();
+        $groupOptions  = ProductGroup::orderBy('sort_order')->pluck('name', 'id');
+        $currencies    = Currency::where('is_active', true)->get();
+        $optionGroups  = ConfigurableOptionGroup::orderBy('name')->get();
+        $serverGroups  = ServerGroup::where('is_active', true)->orderBy('name')->get();
 
         return view('admin.products.edit', [
-            'product' => $product,
-            'groups' => $groups,
-            'currencies' => $currencies,
-            'optionGroups' => $optionGroups,
+            'product'       => $product,
+            'groupOptions'  => $groupOptions,
+            'currencies'    => $currencies,
+            'optionGroups'  => $optionGroups,
             'billingCycles' => self::BILLING_CYCLES,
+            'serverGroups'  => $serverGroups,
         ]);
     }
 
@@ -125,11 +132,13 @@ class ProductController extends Controller
             'description' => ['nullable', 'string'],
             'type' => ['required', 'in:hosting,other'],
             'status' => ['required', 'in:active,hidden,retired'],
-            'provisioning_module' => ['nullable', 'string'],
-            'stock_control' => ['nullable', 'boolean'],
-            'qty_in_stock' => ['nullable', 'integer', 'min:0'],
-            'require_domain' => ['nullable', 'boolean'],
-            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'provisioning_module'  => ['nullable', 'string'],
+            'server_group_id'      => ['nullable', 'exists:server_groups,id'],
+            'provisioning_package' => ['nullable', 'string', 'max:255'],
+            'stock_control'        => ['nullable', 'boolean'],
+            'qty_in_stock'         => ['nullable', 'integer', 'min:0'],
+            'require_domain'       => ['nullable', 'boolean'],
+            'sort_order'           => ['nullable', 'integer', 'min:0'],
         ]);
 
         $validated['stock_control'] = $request->boolean('stock_control');

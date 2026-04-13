@@ -18,6 +18,8 @@ class Product extends Model
         'type',
         'status',
         'provisioning_module',
+        'server_group_id',
+        'provisioning_package',
         'stock_control',
         'qty_in_stock',
         'require_domain',
@@ -45,6 +47,11 @@ class Product extends Model
     public function group(): BelongsTo
     {
         return $this->belongsTo(ProductGroup::class, 'product_group_id');
+    }
+
+    public function serverGroup(): BelongsTo
+    {
+        return $this->belongsTo(ServerGroup::class);
     }
 
     public function pricing(): HasMany

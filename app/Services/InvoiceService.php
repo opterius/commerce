@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Jobs\CreateHostingAccountJob;
+use App\Jobs\UnsuspendHostingAccountJob;
 use App\Models\{Client, ClientCredit, Invoice, InvoiceItem, Order, Payment, Service, Staff};
 use Illuminate\Support\Facades\DB;
 
@@ -132,10 +134,41 @@ class InvoiceService
             $order = $invoice->orders()->first();
             if ($order && $order->status === 'pending') {
                 $order->update(['status' => 'active']);
-                Service::where('order_id', $order->id)
+
+                $pendingServices = Service::where('order_id', $order->id)
                     ->where('status', 'pending')
-                    ->update(['status' => 'active', 'registration_date' => now()->toDateString()]);
+                    ->with('product')
+                    ->get();
+
+                foreach ($pendingServices as $service) {
+                    if ($service->needsProvisioning()) {
+                        // Queue provisioning; job will set status to active on success
+                        CreateHostingAccountJob::dispatch($service->id);
+                    } else {
+                        $service->update(['status' => 'active', 'registration_date' => now()->toDateString()]);
+                    }
+                }
             }
+        }
+
+        // Unsuspend suspended services linked to this invoice's items
+        $suspendedServiceIds = $invoice->items()
+            ->whereNotNull('service_id')
+            ->pluck('service_id')
+            ->unique();
+
+        if ($suspendedServiceIds->isNotEmpty()) {
+            Service::whereIn('id', $suspendedServiceIds)
+                ->where('status', 'suspended')
+                ->with('product')
+                ->get()
+                ->each(function (Service $service) {
+                    if ($service->needsProvisioning()) {
+                        UnsuspendHostingAccountJob::dispatch($service->id);
+                    } else {
+                        $service->update(['status' => 'active', 'suspended_at' => null]);
+                    }
+                });
         }
 
         ActivityLogger::log('invoice.paid', 'invoice', $invoice->id, $invoice->invoice_number);

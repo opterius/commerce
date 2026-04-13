@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Service extends Model
 {
@@ -21,6 +22,8 @@ class Service extends Model
         'product_id',
         'order_id',
         'order_item_id',
+        'server_id',
+        'panel_account_id',
         'status',
         'domain',
         'username',
@@ -68,8 +71,23 @@ class Service extends Model
         return $this->belongsTo(OrderItem::class);
     }
 
+    public function server(): BelongsTo
+    {
+        return $this->belongsTo(Server::class);
+    }
+
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
+    }
+
+    public function provisioningLogs(): HasMany
+    {
+        return $this->hasMany(ProvisioningLog::class);
+    }
+
+    public function needsProvisioning(): bool
+    {
+        return $this->product && $this->product->provisioning_module;
     }
 }

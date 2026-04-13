@@ -13,7 +13,11 @@ return [
     'services'  => 'Services',
     'payments'  => 'Payments',
     'tax_rules' => 'Tax Rules',
-    'billing'   => 'Billing',
+    'billing'           => 'Billing',
+    'infrastructure'    => 'Infrastructure',
+    'server_groups'     => 'Server Groups',
+    'servers'           => 'Servers',
+    'provisioning_log'  => 'Provisioning Log',
 
     // Client portal
     'my_services' => 'My Services',

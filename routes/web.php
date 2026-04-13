@@ -72,6 +72,7 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     // Services
     Route::get('/services', [Admin\ServiceController::class, 'index'])->name('services.index');
     Route::get('/services/{service}', [Admin\ServiceController::class, 'show'])->name('services.show');
+    Route::post('/services/{service}/provision', [Admin\ServiceController::class, 'provisionAction'])->name('services.provision');
 
     // Invoices
     Route::get('/invoices', [Admin\InvoiceController::class, 'index'])->name('invoices.index');
@@ -86,6 +87,13 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
 
     // Tax Rules
     Route::resource('tax-rules', Admin\TaxRuleController::class);
+
+    // Infrastructure: Server Groups + Servers + Provisioning Log
+    Route::resource('server-groups', Admin\ServerGroupController::class)->except('show');
+    Route::resource('servers', Admin\ServerController::class)->except('show');
+    Route::post('/servers/{server}/test', [Admin\ServerController::class, 'testConnection'])->name('servers.test');
+    Route::get('/provisioning-log', [Admin\ProvisioningLogController::class, 'index'])->name('provisioning-log.index');
+    Route::get('/provisioning-log/{provisioningLog}', [Admin\ProvisioningLogController::class, 'show'])->name('provisioning-log.show');
 
     // Settings
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');

@@ -60,6 +60,27 @@
     </div>
 </div>
 
+{{-- Infrastructure (dropdown) --}}
+@php
+    $infraActive = request()->routeIs('admin.server-groups*', 'admin.servers*', 'admin.provisioning-log*');
+@endphp
+<div x-data="{ open: {{ $infraActive ? 'true' : 'false' }} }">
+    <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition {{ $infraActive ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+        <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z" />
+            </svg>
+            {{ __('navigation.infrastructure') }}
+        </span>
+        <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </button>
+    <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1">
+        <a href="{{ route('admin.server-groups.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.server-groups*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.server_groups') }}</a>
+        <a href="{{ route('admin.servers.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.servers*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.servers') }}</a>
+        <a href="{{ route('admin.provisioning-log.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.provisioning-log*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.provisioning_log') }}</a>
+    </div>
+</div>
+
 {{-- Support > Tickets --}}
 <x-sidebar-link href="#" :disabled="true">
     <x-slot:icon>

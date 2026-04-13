@@ -83,6 +83,68 @@
                 @endif
             </div>
 
+            {{-- Provisioning --}}
+            @if ($service->product?->provisioning_module)
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base font-semibold text-gray-800">{{ __('provisioning.provisioning') }}</h3>
+                    <a href="{{ route('admin.provisioning-log.index', ['service_id' => $service->id]) }}" class="text-xs text-indigo-600 hover:underline">
+                        {{ __('provisioning.view_all_logs') }}
+                    </a>
+                </div>
+
+                {{-- Manual action buttons --}}
+                <div class="flex flex-wrap gap-2 mb-5">
+                    @foreach (['create','suspend','unsuspend','terminate'] as $act)
+                        <form method="POST" action="{{ route('admin.services.provision', $service) }}">
+                            @csrf
+                            <input type="hidden" name="action" value="{{ $act }}">
+                            <button type="submit"
+                                class="px-3 py-1.5 text-xs font-medium rounded border {{ $act === 'terminate' ? 'border-red-300 text-red-700 hover:bg-red-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50' }}">
+                                {{ __('provisioning.action_' . $act) }}
+                            </button>
+                        </form>
+                    @endforeach
+                </div>
+
+                {{-- Server info --}}
+                @if ($service->server)
+                    <dl class="grid grid-cols-2 gap-3 text-sm mb-4">
+                        <div>
+                            <dt class="text-xs text-gray-500 uppercase tracking-wider">{{ __('provisioning.server') }}</dt>
+                            <dd class="mt-1 font-medium">{{ $service->server->name }}</dd>
+                        </div>
+                        @if ($service->panel_account_id)
+                            <div>
+                                <dt class="text-xs text-gray-500 uppercase tracking-wider">{{ __('provisioning.panel_account_id') }}</dt>
+                                <dd class="mt-1 font-mono text-xs">{{ $service->panel_account_id }}</dd>
+                            </div>
+                        @endif
+                    </dl>
+                @endif
+
+                {{-- Recent provisioning log --}}
+                @if ($provisioningLogs->isNotEmpty())
+                    <div class="border-t border-gray-100 pt-4">
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">{{ __('provisioning.recent_log') }}</p>
+                        <div class="space-y-2">
+                            @foreach ($provisioningLogs as $log)
+                                @php
+                                    $lColor = match($log->status) { 'success' => 'green', 'failed' => 'red', default => 'yellow' };
+                                @endphp
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-mono text-gray-700">{{ $log->action }}</span>
+                                    <x-badge :color="$lColor" size="xs">{{ $log->status }}</x-badge>
+                                    <span class="text-gray-400">{{ $log->created_at->format('M d, H:i') }}</span>
+                                    <a href="{{ route('admin.provisioning-log.show', $log) }}" class="text-indigo-600 hover:underline">{{ __('common.view') }}</a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+            @endif
+
             {{-- Related invoices --}}
             <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100">

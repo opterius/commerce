@@ -77,6 +77,20 @@
                             ]" :selected="old('provisioning_module')" />
 
                             <div>
+                                <label class="form-label">{{ __('provisioning.server_group') }}</label>
+                                <select name="server_group_id" class="form-input">
+                                    <option value="">— {{ __('common.none') }} —</option>
+                                    @foreach ($serverGroups as $sg)
+                                        <option value="{{ $sg->id }}" {{ old('server_group_id') == $sg->id ? 'selected' : '' }}>
+                                            {{ $sg->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <x-input name="provisioning_package" :label="__('provisioning.provisioning_package')" :value="old('provisioning_package')" />
+
+                            <div>
                                 <label class="inline-flex items-center gap-2">
                                     <input
                                         type="checkbox"
