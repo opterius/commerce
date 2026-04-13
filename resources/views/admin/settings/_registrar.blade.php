@@ -16,6 +16,7 @@
                         <option value="enom">Enom (Tucows)</option>
                         <option value="opensrs">OpenSRS (Tucows)</option>
                         <option value="namecheap">Namecheap</option>
+                        <option value="centralnic">CentralNic Reseller (Hexonet)</option>
                     </select>
                 </div>
 
@@ -125,6 +126,32 @@
                             Sandbox Mode (api.sandbox.namecheap.com)
                         </label>
                         <p class="mt-1 text-xs text-gray-400">Routes API calls to the Namecheap test environment. Disable in production.</p>
+                    </div>
+                </div>
+
+                {{-- CentralNic Reseller credentials --}}
+                <div x-show="module === 'centralnic'" x-cloak class="space-y-4 border border-gray-100 rounded-lg p-4">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">CentralNic Reseller API Credentials</p>
+
+                    <div>
+                        <x-input name="centralnic_login" label="Reseller Login"
+                            :value="$settings['centralnic_login'] ?? ''" placeholder="your-reseller-id" />
+                        <p class="mt-1 text-xs text-gray-400">Your CentralNic Reseller account username (formerly Hexonet login).</p>
+                    </div>
+
+                    <div>
+                        <x-input name="centralnic_password" label="Password"
+                            :value="$settings['centralnic_password'] ?? ''" placeholder="your-password" type="password" />
+                        <p class="mt-1 text-xs text-gray-400">Your CentralNic Reseller account password.</p>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <input type="checkbox" name="centralnic_sandbox" value="1"
+                                {{ ($settings['centralnic_sandbox'] ?? '1') ? 'checked' : '' }} class="rounded">
+                            OTE Mode (api-ote.rrpproxy.net)
+                        </label>
+                        <p class="mt-1 text-xs text-gray-400">Routes API calls to the CentralNic OTE test environment. Disable in production.</p>
                     </div>
                 </div>
 

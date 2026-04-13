@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\DomainRegistrarModule;
 use App\Models\Domain;
 use App\Models\Setting;
+use App\Registrar\Modules\CentralNicModule;
 use App\Registrar\Modules\EnomModule;
 use App\Registrar\Modules\NamecheapModule;
 use App\Registrar\Modules\OpenSrsModule;
@@ -17,6 +18,7 @@ class RegistrarService
         'enom'         => EnomModule::class,
         'opensrs'      => OpenSrsModule::class,
         'namecheap'    => NamecheapModule::class,
+        'centralnic'   => CentralNicModule::class,
     ];
 
     public static function module(): DomainRegistrarModule

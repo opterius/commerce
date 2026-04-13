@@ -120,6 +120,10 @@ class SettingsController extends Controller
             'namecheap_api_key',
             'namecheap_client_ip',
             'namecheap_sandbox',
+            // CentralNic Reseller
+            'centralnic_login',
+            'centralnic_password',
+            'centralnic_sandbox',
         ];
         foreach ($fields as $field) {
             Setting::set($field, $request->input($field, ''), 'registrar');
