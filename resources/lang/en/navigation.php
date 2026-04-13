@@ -24,6 +24,10 @@ return [
     'domains'           => 'Domains',
     'tld_manager'       => 'TLD Manager',
 
+    'reports'          => 'Reports',
+    'service_upgrades' => 'Plan Changes',
+    'two_factor_auth'  => 'Two-Factor Authentication',
+
     // Client portal
     'order_services' => 'Order Services',
     'my_services' => 'My Services',

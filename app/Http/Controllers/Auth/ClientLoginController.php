@@ -23,6 +23,13 @@ class ClientLoginController extends Controller
             $request->session()->regenerate();
 
             $client = auth('client')->user();
+
+            if ($client->two_factor_confirmed_at) {
+                auth('client')->logout();
+                $request->session()->put('two_factor_client_id', $client->id);
+                return redirect()->route('client.two-factor.challenge');
+            }
+
             $client->update([
                 'last_login_at' => now(),
                 'last_login_ip' => $request->ip(),

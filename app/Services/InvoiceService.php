@@ -6,7 +6,8 @@ use App\Jobs\CreateHostingAccountJob;
 use App\Jobs\RegisterDomainJob;
 use App\Jobs\RenewDomainJob;
 use App\Jobs\UnsuspendHostingAccountJob;
-use App\Models\{Client, ClientCredit, Currency, Domain, Invoice, InvoiceItem, Order, Payment, Product, Service, Setting, Staff};
+use App\Models\{Client, ClientCredit, Currency, Domain, Invoice, InvoiceItem, Order, Payment, Product, Service, ServiceUpgradeRequest, Setting, Staff};
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
@@ -352,6 +353,126 @@ class InvoiceService
         ]);
 
         return $payment;
+    }
+
+    // ── Proration & Upgrade ───────────────────────────────────────────────────
+
+    /**
+     * Calculate proration amounts when switching a service to a new price.
+     *
+     * Returns:
+     *  credit        - amount client is credited for unused time on current plan (cents)
+     *  charge        - amount client owes for remaining time on new plan (cents)
+     *  net           - charge - credit (positive = client pays; negative = client gets credit)
+     *  days_remaining
+     *  total_days
+     */
+    public function calculateProration(Service $service, int $newAmount): array
+    {
+        $cycleDays = match ($service->billing_cycle) {
+            'monthly'     => 30,
+            'quarterly'   => 90,
+            'semi_annual' => 180,
+            'annual'      => 365,
+            'biennial'    => 730,
+            'triennial'   => 1095,
+            default       => 30,
+        };
+
+        $daysRemaining = max(0, (int) Carbon::now()->diffInDays($service->next_due_date, false));
+        $credit        = (int) round(($daysRemaining / $cycleDays) * $service->amount);
+        $charge        = (int) round(($daysRemaining / $cycleDays) * $newAmount);
+        $net           = $charge - $credit;
+
+        return [
+            'credit'        => $credit,
+            'charge'        => $charge,
+            'net'           => $net,
+            'days_remaining'=> $daysRemaining,
+            'total_days'    => $cycleDays,
+        ];
+    }
+
+    /**
+     * Create an invoice for a plan-change proration charge.
+     * Returns null when no charge is owed (net <= 0).
+     */
+    public function createForUpgrade(ServiceUpgradeRequest $upgradeRequest): ?Invoice
+    {
+        if ($upgradeRequest->proration_charge <= 0) {
+            return null;
+        }
+
+        $upgradeRequest->loadMissing(['fromProduct', 'toProduct', 'service']);
+
+        $fromName = $upgradeRequest->fromProduct?->name ?? 'Previous Plan';
+        $toName   = $upgradeRequest->toProduct?->name   ?? 'New Plan';
+        $description = "Plan Change: {$fromName} → {$toName}";
+
+        $dueDays = (int) Setting::get('invoice_due_days', '7');
+        $dueDate = now()->addDays($dueDays)->toDateString();
+
+        $invoice = Invoice::create([
+            'client_id'      => $upgradeRequest->client_id,
+            'invoice_number' => $this->generateInvoiceNumber(),
+            'status'         => 'unpaid',
+            'due_date'       => $dueDate,
+            'currency_code'  => $upgradeRequest->service->currency_code,
+            'subtotal'       => $upgradeRequest->proration_charge,
+            'tax'            => 0,
+            'total'          => $upgradeRequest->proration_charge,
+            'credit_applied' => 0,
+        ]);
+
+        InvoiceItem::create([
+            'invoice_id'  => $invoice->id,
+            'service_id'  => $upgradeRequest->service_id,
+            'description' => $description,
+            'amount'      => $upgradeRequest->proration_charge,
+            'tax_amount'  => 0,
+            'quantity'    => 1,
+        ]);
+
+        return $invoice;
+    }
+
+    /**
+     * Apply an approved upgrade request to the service.
+     * Handles credit issuance, invoice creation, and service record update.
+     */
+    public function applyUpgrade(ServiceUpgradeRequest $upgradeRequest): void
+    {
+        $upgradeRequest->loadMissing(['service', 'fromProduct', 'toProduct']);
+
+        // Update the service to the new plan
+        $upgradeRequest->service->update([
+            'product_id'    => $upgradeRequest->to_product_id,
+            'billing_cycle' => $upgradeRequest->to_billing_cycle,
+            'amount'        => $upgradeRequest->to_amount,
+        ]);
+
+        if ($upgradeRequest->proration_charge < 0) {
+            // Net credit: give the client the difference
+            ClientCredit::create([
+                'client_id'    => $upgradeRequest->client_id,
+                'invoice_id'   => null,
+                'amount'       => abs($upgradeRequest->proration_charge),
+                'currency_code'=> $upgradeRequest->service->currency_code,
+                'description'  => 'Plan change credit: ' . ($upgradeRequest->fromProduct?->name ?? 'Previous Plan') . ' → ' . ($upgradeRequest->toProduct?->name ?? 'New Plan'),
+                'type'         => 'credit',
+            ]);
+        } elseif ($upgradeRequest->proration_charge > 0) {
+            $invoice = $this->createForUpgrade($upgradeRequest);
+            if ($invoice) {
+                $upgradeRequest->invoice_id = $invoice->id;
+            }
+        }
+
+        $upgradeRequest->update([
+            'status'       => 'approved',
+            'processed_at' => now(),
+            'invoice_id'   => $upgradeRequest->invoice_id,
+        ]);
     }
 
     private function reconcileInvoice(Invoice $invoice): void

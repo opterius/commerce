@@ -23,6 +23,13 @@ class StaffLoginController extends Controller
             $request->session()->regenerate();
 
             $staff = auth('staff')->user();
+
+            if ($staff->two_factor_confirmed_at) {
+                auth('staff')->logout();
+                $request->session()->put('two_factor_staff_id', $staff->id);
+                return redirect()->route('staff.two-factor.challenge');
+            }
+
             $staff->update([
                 'last_login_at' => now(),
                 'last_login_ip' => $request->ip(),

@@ -20,6 +20,10 @@ Route::get('/admin/login', [Auth\StaffLoginController::class, 'showLoginForm'])-
 Route::post('/admin/login', [Auth\StaffLoginController::class, 'login']);
 Route::post('/admin/logout', [Auth\StaffLoginController::class, 'logout'])->name('staff.logout');
 
+// Staff 2FA challenge (public — no staff middleware)
+Route::get('/admin/two-factor-challenge', [Auth\StaffTwoFactorChallengeController::class, 'show'])->name('staff.two-factor.challenge');
+Route::post('/admin/two-factor-challenge', [Auth\StaffTwoFactorChallengeController::class, 'store']);
+
 Route::get('/admin/forgot-password', [Auth\StaffForgotPasswordController::class, 'showForm'])->name('staff.password.request');
 Route::post('/admin/forgot-password', [Auth\StaffForgotPasswordController::class, 'sendResetLink'])->name('staff.password.email');
 Route::get('/admin/reset-password/{token}', [Auth\StaffResetPasswordController::class, 'showForm'])->name('staff.password.reset');
@@ -29,6 +33,10 @@ Route::post('/admin/reset-password', [Auth\StaffResetPasswordController::class, 
 Route::get('/client/login', [Auth\ClientLoginController::class, 'showLoginForm'])->name('client.login');
 Route::post('/client/login', [Auth\ClientLoginController::class, 'login']);
 Route::post('/client/logout', [Auth\ClientLoginController::class, 'logout'])->name('client.logout');
+
+// Client 2FA challenge (public — no client middleware)
+Route::get('/client/two-factor-challenge', [Auth\ClientTwoFactorChallengeController::class, 'show'])->name('client.two-factor.challenge');
+Route::post('/client/two-factor-challenge', [Auth\ClientTwoFactorChallengeController::class, 'store']);
 
 Route::get('/client/forgot-password', [Auth\ClientForgotPasswordController::class, 'showForm'])->name('client.password.request');
 Route::post('/client/forgot-password', [Auth\ClientForgotPasswordController::class, 'sendResetLink'])->name('client.password.email');
@@ -136,6 +144,22 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');
     Route::post('/settings/{category}', [Admin\SettingsController::class, 'update'])->name('settings.update');
     Route::delete('/settings/currencies/{currency}', [Admin\SettingsController::class, 'deleteCurrency'])->name('settings.currencies.destroy');
+
+    // Reports
+    Route::get('/reports', [Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export', [Admin\ReportController::class, 'exportCsv'])->name('reports.export-csv');
+
+    // Service Upgrade Requests
+    Route::get('/service-upgrades', [Admin\ServiceUpgradeController::class, 'index'])->name('service-upgrades.index');
+    Route::post('/service-upgrades/{upgradeRequest}/approve', [Admin\ServiceUpgradeController::class, 'approve'])->name('service-upgrades.approve');
+    Route::post('/service-upgrades/{upgradeRequest}/reject', [Admin\ServiceUpgradeController::class, 'reject'])->name('service-upgrades.reject');
+
+    // Staff 2FA profile
+    Route::get('/profile/two-factor', [Auth\StaffTwoFactorController::class, 'show'])->name('staff.two-factor.show');
+    Route::post('/profile/two-factor/enable', [Auth\StaffTwoFactorController::class, 'enable'])->name('staff.two-factor.enable');
+    Route::post('/profile/two-factor/confirm', [Auth\StaffTwoFactorController::class, 'confirm'])->name('staff.two-factor.confirm');
+    Route::post('/profile/two-factor/disable', [Auth\StaffTwoFactorController::class, 'disable'])->name('staff.two-factor.disable');
+    Route::post('/profile/two-factor/recovery-codes', [Auth\StaffTwoFactorController::class, 'regenerateCodes'])->name('staff.two-factor.recovery-codes');
 });
 
 // ── Client Portal ────────────────────────────────────────────────────────────
@@ -184,6 +208,17 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     Route::post('/tickets/{ticket}/reply', [Client\TicketController::class, 'reply'])->name('tickets.reply');
     Route::patch('/tickets/{ticket}/close', [Client\TicketController::class, 'close'])->name('tickets.close');
     Route::get('/tickets/{ticket}/attachments/{attachment}', [Client\TicketController::class, 'downloadAttachment'])->name('tickets.attachment');
+
+    // Service Upgrades / Downgrades
+    Route::get('/services/{service}/upgrade', [Client\ServiceUpgradeController::class, 'show'])->name('services.upgrade');
+    Route::post('/services/{service}/upgrade', [Client\ServiceUpgradeController::class, 'store'])->name('services.upgrade.store');
+
+    // Client 2FA settings
+    Route::get('/security/two-factor', [Client\ClientTwoFactorController::class, 'show'])->name('two-factor.show');
+    Route::post('/security/two-factor/enable', [Client\ClientTwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::post('/security/two-factor/confirm', [Client\ClientTwoFactorController::class, 'confirm'])->name('two-factor.confirm');
+    Route::post('/security/two-factor/disable', [Client\ClientTwoFactorController::class, 'disable'])->name('two-factor.disable');
+    Route::post('/security/two-factor/recovery-codes', [Client\ClientTwoFactorController::class, 'regenerateCodes'])->name('two-factor.recovery-codes');
 
     // Return from impersonation
     Route::post('/return-to-admin', function () {
