@@ -12,8 +12,8 @@ class PromoCodeController extends Controller
 {
     public function index()
     {
-        $promoCodes = PromoCode::latest()->paginate(config('commerce.pagination', 25));
-        return view('admin.products.promos.index', compact('promoCodes'));
+        $promos = PromoCode::latest()->paginate(config('commerce.pagination', 25));
+        return view('admin.products.promos.index', compact('promos'));
     }
 
     public function create()

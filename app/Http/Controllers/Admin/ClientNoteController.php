@@ -33,8 +33,10 @@ class ClientNoteController extends Controller
         return back()->with('success', __('clients.note_added'));
     }
 
-    public function destroy(Client $client, ClientNote $note)
+    public function destroy(Request $request, Client $client, ClientNote $note)
     {
+        $request->validate(['password' => ['required', 'current_password:staff']]);
+
         if ($note->client_id !== $client->id) {
             abort(404);
         }

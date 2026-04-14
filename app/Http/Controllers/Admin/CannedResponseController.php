@@ -65,8 +65,10 @@ class CannedResponseController extends Controller
             ->with('success', "Canned response \"{$cannedResponse->title}\" updated.");
     }
 
-    public function destroy(CannedResponse $cannedResponse)
+    public function destroy(Request $request, CannedResponse $cannedResponse)
     {
+        $request->validate(['password' => ['required', 'current_password:staff']]);
+
         $title = $cannedResponse->title;
         $cannedResponse->delete();
 

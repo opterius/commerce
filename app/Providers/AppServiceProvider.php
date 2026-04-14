@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Staff;
+use App\Provisioning\Modules\OpteriusPanelModule;
+use App\Provisioning\ProvisioningModuleRegistry;
 use App\Support\StaffPermissions;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -12,7 +14,22 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(ProvisioningModuleRegistry::class, function () {
+            $registry = new ProvisioningModuleRegistry();
+
+            // ── Built-in module (always available) ───────────────────────────
+            $registry->register(OpteriusPanelModule::class);
+
+            // ── Auto-discover plugin modules ──────────────────────────────────
+            // Drop any class implementing ProvisioningModule into
+            // app/Provisioning/Modules/ and it will be picked up automatically.
+            $registry->discoverIn(
+                app_path('Provisioning/Modules'),
+                'App\\Provisioning\\Modules'
+            );
+
+            return $registry;
+        });
     }
 
     public function boot(): void

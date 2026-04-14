@@ -45,7 +45,7 @@ class StaffTwoFactorController extends Controller
         $secret = $this->totp->generateSecret();
         $request->session()->put('two_factor_setup_secret', $secret);
 
-        return redirect()->route('staff.two-factor.show');
+        return redirect()->route('admin.two-factor.show');
     }
 
     /**
@@ -61,7 +61,7 @@ class StaffTwoFactorController extends Controller
         $secret = $request->session()->get('two_factor_setup_secret');
 
         if (! $secret) {
-            return redirect()->route('staff.two-factor.show')
+            return redirect()->route('admin.two-factor.show')
                 ->with('error', 'Session expired. Please start setup again.');
         }
 
@@ -81,7 +81,7 @@ class StaffTwoFactorController extends Controller
         $request->session()->forget('two_factor_setup_secret');
         $request->session()->put('two_factor_backup_codes', $plainCodes);
 
-        return redirect()->route('staff.two-factor.show')
+        return redirect()->route('admin.two-factor.show')
             ->with('status', '2FA has been enabled. Save your backup codes somewhere safe.');
     }
 
@@ -106,7 +106,7 @@ class StaffTwoFactorController extends Controller
             'two_factor_confirmed_at'   => null,
         ]);
 
-        return redirect()->route('staff.two-factor.show')
+        return redirect()->route('admin.two-factor.show')
             ->with('status', '2FA has been disabled.');
     }
 
@@ -138,7 +138,7 @@ class StaffTwoFactorController extends Controller
 
         $request->session()->put('two_factor_backup_codes', $plainCodes);
 
-        return redirect()->route('staff.two-factor.show')
+        return redirect()->route('admin.two-factor.show')
             ->with('status', 'Backup codes regenerated. Save them now — they won\'t be shown again.');
     }
 }

@@ -20,6 +20,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
+
+        // Redirect unauthenticated users to the correct login page per guard
+        $middleware->redirectGuestsTo(function ($request) {
+            if ($request->is('admin/*') || $request->is('admin')) {
+                return route('staff.login');
+            }
+            return route('client.login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

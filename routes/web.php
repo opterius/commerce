@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Client;
+use App\Http\Controllers\PortalController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Webhook\GatewayWebhookController;
@@ -12,13 +13,13 @@ Route::post('/webhooks/{gateway}', [GatewayWebhookController::class, 'handle'])
     ->name('webhooks.gateway')
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
-// ── Root redirect ────────────────────────────────────────────────────────────
-Route::get('/', fn () => redirect()->route('client.login'));
+// ── Public portal ────────────────────────────────────────────────────────────
+Route::get('/', [PortalController::class, 'home'])->name('home');
 
 // ── Staff Auth ───────────────────────────────────────────────────────────────
 Route::get('/admin/login', [Auth\StaffLoginController::class, 'showLoginForm'])->name('staff.login');
 Route::post('/admin/login', [Auth\StaffLoginController::class, 'login']);
-Route::post('/admin/logout', [Auth\StaffLoginController::class, 'logout'])->name('staff.logout');
+Route::post('/admin/logout', [Auth\StaffLoginController::class, 'logout'])->name('admin.logout');
 
 // Staff 2FA challenge (public — no staff middleware)
 Route::get('/admin/two-factor-challenge', [Auth\StaffTwoFactorChallengeController::class, 'show'])->name('staff.two-factor.challenge');
@@ -46,7 +47,9 @@ Route::post('/client/reset-password', [Auth\ClientResetPasswordController::class
 // ── Admin Panel ──────────────────────────────────────────────────────────────
 Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->group(function () {
 
+    Route::get('/', fn () => redirect()->route('admin.dashboard'));
     Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', fn () => redirect()->route('admin.two-factor.show'))->name('profile');
 
     // Clients
     Route::resource('clients', Admin\ClientController::class);
@@ -155,11 +158,11 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     Route::post('/service-upgrades/{upgradeRequest}/reject', [Admin\ServiceUpgradeController::class, 'reject'])->name('service-upgrades.reject');
 
     // Staff 2FA profile
-    Route::get('/profile/two-factor', [Auth\StaffTwoFactorController::class, 'show'])->name('staff.two-factor.show');
-    Route::post('/profile/two-factor/enable', [Auth\StaffTwoFactorController::class, 'enable'])->name('staff.two-factor.enable');
-    Route::post('/profile/two-factor/confirm', [Auth\StaffTwoFactorController::class, 'confirm'])->name('staff.two-factor.confirm');
-    Route::post('/profile/two-factor/disable', [Auth\StaffTwoFactorController::class, 'disable'])->name('staff.two-factor.disable');
-    Route::post('/profile/two-factor/recovery-codes', [Auth\StaffTwoFactorController::class, 'regenerateCodes'])->name('staff.two-factor.recovery-codes');
+    Route::get('/profile/two-factor', [Auth\StaffTwoFactorController::class, 'show'])->name('two-factor.show');
+    Route::post('/profile/two-factor/enable', [Auth\StaffTwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::post('/profile/two-factor/confirm', [Auth\StaffTwoFactorController::class, 'confirm'])->name('two-factor.confirm');
+    Route::post('/profile/two-factor/disable', [Auth\StaffTwoFactorController::class, 'disable'])->name('two-factor.disable');
+    Route::post('/profile/two-factor/recovery-codes', [Auth\StaffTwoFactorController::class, 'regenerateCodes'])->name('two-factor.recovery-codes');
 });
 
 // ── Client Portal ────────────────────────────────────────────────────────────

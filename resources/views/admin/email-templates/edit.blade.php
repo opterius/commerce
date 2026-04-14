@@ -37,7 +37,7 @@
 
                     <div>
                         <label class="form-label">{{ __('email_templates.body') }}</label>
-                        <textarea name="body" rows="20" class="form-input font-mono text-sm" required>{{ old('body', $emailTemplate->body) }}</textarea>
+                        <textarea name="body" rows="20" class="form-input font-mono text-sm" style="white-space: pre; overflow-x: auto;" required>{{ old('body', $emailTemplate->body) }}</textarea>
                         @error('body') <p class="form-error">{{ $message }}</p> @enderror
                         <p class="text-xs text-gray-400 mt-1">{{ __('email_templates.html_note') }}</p>
                     </div>

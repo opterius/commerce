@@ -65,8 +65,10 @@ class ClientContactController extends Controller
         return back()->with('success', __('clients.contact_updated'));
     }
 
-    public function destroy(Client $client, ClientContact $contact)
+    public function destroy(Request $request, Client $client, ClientContact $contact)
     {
+        $request->validate(['password' => ['required', 'current_password:staff']]);
+
         if ($contact->client_id !== $client->id) {
             abort(404);
         }

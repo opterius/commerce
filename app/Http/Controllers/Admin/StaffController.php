@@ -114,9 +114,10 @@ class StaffController extends AdminController
             ->with('success', __('staff.updated', ['name' => $staff->name]));
     }
 
-    public function destroy(Staff $staff)
+    public function destroy(Request $request, Staff $staff)
     {
         $this->authorize('staff.manage');
+        $request->validate(['password' => ['required', 'current_password:staff']]);
 
         // Prevent deleting yourself
         if ($staff->id === auth('staff')->id()) {

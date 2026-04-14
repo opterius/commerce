@@ -92,8 +92,10 @@ class TldController extends Controller
             ->with('success', ".{$tld->tld} TLD updated.");
     }
 
-    public function destroy(DomainTld $tld)
+    public function destroy(Request $request, DomainTld $tld)
     {
+        $request->validate(['password' => ['required', 'current_password:staff']]);
+
         $name = $tld->tld;
         $tld->delete();
 

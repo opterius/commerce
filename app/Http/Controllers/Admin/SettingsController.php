@@ -36,6 +36,7 @@ class SettingsController extends Controller
             ]),
             'registrar'  => $this->updateRegistrar($request),
             'gateways'   => $this->updateGateways($request),
+            'portal'     => $this->updatePortal($request),
             default => abort(404),
         };
 
@@ -160,6 +161,30 @@ class SettingsController extends Controller
     {
         foreach ($fields as $field) {
             Setting::set($field, $request->input($field, ''), $group);
+        }
+    }
+
+    private function updatePortal(Request $request): void
+    {
+        foreach (['portal_hero_title', 'portal_hero_subtitle', 'portal_primary_color'] as $field) {
+            Setting::set($field, $request->input($field, ''), 'portal');
+        }
+
+        foreach (['portal_show_hero', 'portal_show_products', 'portal_show_domain_search'] as $field) {
+            Setting::set($field, $request->boolean($field) ? '1' : '0', 'portal');
+        }
+
+        $rawLinks = $request->input('portal_nav_links', '[]');
+        $links    = json_decode($rawLinks, true);
+        if (is_array($links)) {
+            $links = collect($links)
+                ->filter(fn($l) => ! empty($l['label']) && ! empty($l['url']))
+                ->map(fn($l) => [
+                    'label'    => strip_tags((string) ($l['label'] ?? '')),
+                    'url'      => (string) ($l['url'] ?? '#'),
+                    'open_new' => (bool) ($l['open_new'] ?? false),
+                ])->values()->all();
+            Setting::set('portal_nav_links', json_encode($links), 'portal');
         }
     }
 

@@ -73,7 +73,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('staff.two-factor.confirm') }}" class="flex gap-3">
+                <form method="POST" action="{{ route('admin.two-factor.confirm') }}" class="flex gap-3">
                     @csrf
                     <input
                         name="code"
@@ -121,7 +121,7 @@
                             <p class="text-sm text-red-800">{{ $errors->first('password') }}</p>
                         </div>
                     @endif
-                    <form method="POST" action="{{ route('staff.two-factor.recovery-codes') }}" class="flex gap-3 items-center">
+                    <form method="POST" action="{{ route('admin.two-factor.recovery-codes') }}" class="flex gap-3 items-center">
                         @csrf
                         <input
                             name="password"
@@ -155,7 +155,7 @@
                             <p class="text-sm text-red-800">{{ $errors->first('password') }}</p>
                         </div>
                     @endif
-                    <form method="POST" action="{{ route('staff.two-factor.disable') }}" class="flex gap-3 items-center">
+                    <form method="POST" action="{{ route('admin.two-factor.disable') }}" class="flex gap-3 items-center">
                         @csrf
                         <input
                             name="password"
@@ -184,7 +184,7 @@
                     Two-factor authentication adds an extra layer of security to your account. When enabled, you'll need
                     to enter a time-based code from your authenticator app on every login.
                 </p>
-                <form method="POST" action="{{ route('staff.two-factor.enable') }}">
+                <form method="POST" action="{{ route('admin.two-factor.enable') }}">
                     @csrf
                     <button type="submit"
                         class="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">

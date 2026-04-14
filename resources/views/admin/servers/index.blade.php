@@ -51,15 +51,15 @@
                                 </x-badge>
                             </td>
                             <td class="table-td">
-                                <div class="flex items-center gap-3 text-sm">
+                                <div class="flex items-center gap-2">
                                     <form method="POST" action="{{ route('admin.servers.test', $server) }}">
                                         @csrf
-                                        <button type="submit" class="text-blue-600 hover:underline">{{ __('provisioning.test_connection') }}</button>
+                                        <button type="submit" class="btn-secondary py-1 px-3 text-xs">{{ __('provisioning.test_connection') }}</button>
                                     </form>
-                                    <a href="{{ route('admin.servers.edit', $server) }}" class="text-indigo-600 hover:underline">{{ __('common.edit') }}</a>
+                                    <a href="{{ route('admin.servers.edit', $server) }}" class="btn-secondary py-1 px-3 text-xs">{{ __('common.edit') }}</a>
                                     <x-delete-modal
                                         :action="route('admin.servers.destroy', $server)"
-                                        :label="__('common.delete')"
+                                        label="{{ __('common.delete') }}"
                                         :confirmMessage="__('common.are_you_sure')"
                                     />
                                 </div>

@@ -10,6 +10,47 @@ use Illuminate\Support\Facades\Http;
 
 class OpteriusPanelModule implements ProvisioningModule
 {
+    // ── Module metadata ───────────────────────────────────────────────────────
+
+    public static function moduleId(): string
+    {
+        return 'opterius';
+    }
+
+    public static function moduleLabel(): string
+    {
+        return 'Opterius Panel';
+    }
+
+    public static function moduleDescription(): string
+    {
+        return 'Connect to an Opterius Panel instance. Commerce calls the Panel REST API to create, suspend, and terminate hosting accounts. The Panel handles all server-level operations on the physical machine.';
+    }
+
+    public static function moduleFields(): array
+    {
+        return [
+            [
+                'name'        => 'api_url',
+                'label'       => 'API URL',
+                'type'        => 'url',
+                'placeholder' => 'https://panel.example.com',
+                'required'    => true,
+                'secret'      => false,
+            ],
+            [
+                'name'        => 'api_token',
+                'label'       => 'API Token',
+                'type'        => 'password',
+                'placeholder' => '',
+                'required'    => true,
+                'secret'      => true,
+            ],
+        ];
+    }
+
+    // ── Runtime provisioning ──────────────────────────────────────────────────
+
     public function createAccount(Service $service): ProvisioningResult
     {
         $server = $service->server;
@@ -78,12 +119,22 @@ class OpteriusPanelModule implements ProvisioningModule
         return $this->request($server, 'GET', '/api/ping', []);
     }
 
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
     private function request(Server $server, string $method, string $path, array $payload): ProvisioningResult
     {
+        $credentials = $server->credentials ?? [];
+        $apiUrl      = $credentials['api_url']   ?? '';
+        $apiToken    = $credentials['api_token']  ?? '';
+
+        if (! $apiUrl || ! $apiToken) {
+            return ProvisioningResult::failure('Server is missing API URL or API Token.');
+        }
+
         try {
             $timestamp = (string) time();
             $bodyJson  = empty($payload) ? '{}' : json_encode($payload);
-            $signature = hash_hmac('sha256', $timestamp . $bodyJson, $server->api_token);
+            $signature = hash_hmac('sha256', $timestamp . $bodyJson, $apiToken);
 
             $response = Http::timeout(15)
                 ->withHeaders([
@@ -91,7 +142,7 @@ class OpteriusPanelModule implements ProvisioningModule
                     'X-Signature' => $signature,
                     'Accept'      => 'application/json',
                 ])
-                ->$method(rtrim($server->api_url, '/') . $path, $payload ?: null);
+                ->$method(rtrim($apiUrl, '/') . $path, $payload ?: null);
 
             if ($response->successful()) {
                 return ProvisioningResult::success('OK', $response->json() ?? []);

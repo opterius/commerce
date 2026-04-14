@@ -85,7 +85,13 @@
 
             {{-- Page content --}}
             <main class="flex-1 p-6">
-                {{ $slot }}
+                {{-- Page header (title + action button) --}}
+                @if (isset($header))
+                    <div class="mb-6">{{ $header }}</div>
+                @endif
+
+                {{ $slot ?? '' }}
+                @yield('content')
             </main>
         </div>
     </div>

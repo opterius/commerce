@@ -26,4 +26,12 @@ return [
     'invalid_reset_token' => 'This password reset token is invalid or has expired.',
 
     'forgot_password_text' => 'Enter your email address and we will send you a link to reset your password.',
+
+    'are_you_client'     => 'Are you a client?',
+    'client_login_link'  => 'Sign in to the client portal',
+    'are_you_staff'      => 'Are you a staff member?',
+    'staff_login_link'   => 'Sign in to the admin panel',
+
+    'sign_in'            => 'Sign In',
+    'get_started'        => 'Get Started',
 ];

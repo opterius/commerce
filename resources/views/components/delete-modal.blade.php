@@ -1,17 +1,36 @@
 @props([
-    'name',
-    'title',
+    'name'           => null,
+    'title'          => null,
+    'message'        => '',
+    'confirmMessage' => '',   // alias for message (used in table-row inline pattern)
     'action',
-    'message' => '',
+    'label'          => null, // if set, renders an inline trigger button
+    'buttonClass'    => 'btn-danger py-1 px-3 text-xs',
 ])
 
-<x-modal :name="$name" maxWidth="md">
+@php
+    $modalName = $name ?? 'delete-' . substr(md5($action), 0, 8);
+    $bodyText  = $message ?: $confirmMessage;
+    $titleText = $title  ?? __('common.are_you_sure');
+@endphp
+
+{{-- Inline trigger button (table-row pattern) --}}
+@if ($label !== null)
+    <button
+        type="button"
+        x-on:click="$dispatch('open-modal', '{{ $modalName }}')"
+        class="{{ $buttonClass }}"
+    >
+        {{ $label }}
+    </button>
+@endif
+
+<x-modal :name="$modalName" maxWidth="md">
     <form method="POST" action="{{ $action }}">
         @csrf
         @method('DELETE')
 
         <div class="p-6">
-            {{-- Header --}}
             <div class="flex items-center gap-4">
                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
                     <svg class="w-5 h-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -19,20 +38,19 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">{{ $title }}</h3>
-                    @if ($message)
-                        <p class="mt-1 text-sm text-gray-600">{{ $message }}</p>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ $titleText }}</h3>
+                    @if ($bodyText)
+                        <p class="mt-1 text-sm text-gray-600">{{ $bodyText }}</p>
                     @endif
                 </div>
             </div>
 
-            {{-- Password confirmation --}}
             <div class="mt-6">
-                <x-label for="delete_password_{{ $name }}" :value="__('common.confirm_password')" />
+                <x-label for="del_pw_{{ $modalName }}" :value="__('common.confirm_password')" />
                 <input
                     type="password"
                     name="password"
-                    id="delete_password_{{ $name }}"
+                    id="del_pw_{{ $modalName }}"
                     required
                     autocomplete="current-password"
                     placeholder="{{ __('common.enter_password') }}"
@@ -41,11 +59,10 @@
             </div>
         </div>
 
-        {{-- Footer --}}
         <div class="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-xl">
             <x-secondary-button
                 type="button"
-                x-on:click="$dispatch('close-modal', '{{ $name }}')"
+                x-on:click="$dispatch('close-modal', '{{ $modalName }}')"
             >
                 {{ __('common.cancel') }}
             </x-secondary-button>

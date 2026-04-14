@@ -1,6 +1,6 @@
 <header class="bg-white border-b border-gray-200">
     <div class="flex items-center justify-between h-16 px-6">
-        {{-- Left: mobile menu toggle + page header --}}
+        {{-- Left: mobile menu toggle --}}
         <div class="flex items-center gap-4">
             {{-- Mobile menu button --}}
             <button
@@ -11,11 +11,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
             </button>
-
-            {{-- Page header --}}
-            @if (isset($header))
-                <h1 class="text-xl font-semibold text-gray-900">{{ $header }}</h1>
-            @endif
         </div>
 
         {{-- Right: staff dropdown --}}

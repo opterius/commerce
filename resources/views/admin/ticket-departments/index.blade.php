@@ -40,11 +40,11 @@
                                     </x-badge>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3 text-sm">
-                                        <a href="{{ route('admin.ticket-departments.edit', $dept) }}" class="text-indigo-600 hover:underline">{{ __('common.edit') }}</a>
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('admin.ticket-departments.edit', $dept) }}" class="btn-secondary py-1 px-3 text-xs">{{ __('common.edit') }}</a>
                                         <x-delete-modal
                                             :action="route('admin.ticket-departments.destroy', $dept)"
-                                            :label="__('common.delete')"
+                                            label="{{ __('common.delete') }}"
                                             :confirmMessage="__('common.are_you_sure')"
                                         />
                                     </div>

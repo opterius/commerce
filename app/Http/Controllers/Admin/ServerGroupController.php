@@ -62,8 +62,10 @@ class ServerGroupController extends Controller
             ->with('success', "Server group \"{$serverGroup->name}\" updated.");
     }
 
-    public function destroy(ServerGroup $serverGroup)
+    public function destroy(Request $request, ServerGroup $serverGroup)
     {
+        $request->validate(['password' => ['required', 'current_password:staff']]);
+
         $name = $serverGroup->name;
         $serverGroup->delete();
 

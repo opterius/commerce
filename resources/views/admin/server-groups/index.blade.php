@@ -42,12 +42,13 @@
                                 </x-badge>
                             </td>
                             <td class="table-td">
-                                <div class="flex items-center gap-3 text-sm">
-                                    <a href="{{ route('admin.server-groups.edit', $group) }}" class="text-indigo-600 hover:underline">{{ __('common.edit') }}</a>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('admin.server-groups.edit', $group) }}" class="btn-secondary py-1 px-3 text-xs">{{ __('common.edit') }}</a>
                                     <x-delete-modal
                                         :action="route('admin.server-groups.destroy', $group)"
-                                        :label="__('common.delete')"
+                                        label="{{ __('common.delete') }}"
                                         :confirmMessage="__('common.are_you_sure')"
+                                        buttonClass="btn-danger py-1 px-3 text-xs"
                                     />
                                 </div>
                             </td>

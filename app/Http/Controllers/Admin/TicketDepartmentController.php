@@ -68,8 +68,10 @@ class TicketDepartmentController extends Controller
             ->with('success', "Department \"{$ticketDepartment->name}\" updated.");
     }
 
-    public function destroy(TicketDepartment $ticketDepartment)
+    public function destroy(Request $request, TicketDepartment $ticketDepartment)
     {
+        $request->validate(['password' => ['required', 'current_password:staff']]);
+
         $name = $ticketDepartment->name;
         $ticketDepartment->delete();
 
