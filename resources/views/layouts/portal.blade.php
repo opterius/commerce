@@ -5,6 +5,19 @@
     $brandName   = $brandingSettings['brand_name'] ?? config('app.name', 'Opterius Commerce');
     $brandLogo   = $brandingSettings['brand_logo'] ?? null;
     $navLinks    = json_decode($portalSettings['portal_nav_links'] ?? '[]', true) ?? [];
+
+    // Auto-built nav links for enabled content sections
+    $autoLinks = [];
+    if (($portalSettings['portal_show_kb']      ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('kb.portal_title'),      'url' => url('/kb'),      'open_new' => false];
+    }
+    if (($portalSettings['portal_show_faq']     ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('faq.portal_title'),     'url' => url('/faq'),     'open_new' => false];
+    }
+    if (($portalSettings['portal_show_contact'] ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('contact.portal_title'), 'url' => url('/contact'), 'open_new' => false];
+    }
+    $allNavLinks = array_merge($navLinks, $autoLinks);
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -119,10 +132,10 @@
                 @endif
             </a>
 
-            {{-- Custom nav links (desktop) --}}
-            @if (count($navLinks) > 0)
+            {{-- Custom + auto-built nav links (desktop) --}}
+            @if (count($allNavLinks) > 0)
                 <nav class="hidden md:flex items-center gap-1 flex-1">
-                    @foreach ($navLinks as $link)
+                    @foreach ($allNavLinks as $link)
                         <a href="{{ $link['url'] }}"
                            {{ ($link['open_new'] ?? false) ? 'target="_blank" rel="noopener"' : '' }}
                            class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 transition">
@@ -180,7 +193,7 @@
 
                 {{-- Nav + auth links --}}
                 <nav style="display:flex; align-items:center; flex-wrap:wrap; gap:1.5rem;">
-                    @foreach ($navLinks as $link)
+                    @foreach ($allNavLinks as $link)
                         <a href="{{ $link['url'] }}"
                            {{ ($link['open_new'] ?? false) ? 'target="_blank" rel="noopener"' : '' }}
                            style="font-size:.875rem; color:#6b7280; text-decoration:none;"

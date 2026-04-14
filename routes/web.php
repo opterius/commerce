@@ -16,6 +16,18 @@ Route::post('/webhooks/{gateway}', [GatewayWebhookController::class, 'handle'])
 // ── Public portal ────────────────────────────────────────────────────────────
 Route::get('/', [PortalController::class, 'home'])->name('home');
 
+// Knowledge Base
+Route::get('/kb',                              [PortalController::class, 'kbIndex'])->name('portal.kb');
+Route::get('/kb/{category:slug}',              [PortalController::class, 'kbCategory'])->name('portal.kb.category');
+Route::get('/kb/{category:slug}/{article:slug}', [PortalController::class, 'kbArticle'])->name('portal.kb.article');
+
+// FAQ
+Route::get('/faq', [PortalController::class, 'faq'])->name('portal.faq');
+
+// Contact
+Route::get('/contact',  [PortalController::class, 'contact'])->name('portal.contact');
+Route::post('/contact', [PortalController::class, 'contactSubmit'])->name('portal.contact.submit');
+
 // ── Staff Auth ───────────────────────────────────────────────────────────────
 Route::get('/admin/login', [Auth\StaffLoginController::class, 'showLoginForm'])->name('staff.login');
 Route::post('/admin/login', [Auth\StaffLoginController::class, 'login']);
@@ -142,6 +154,14 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
 
     // Email Templates
     Route::resource('email-templates', Admin\EmailTemplateController::class)->except('show');
+
+    // Content: Knowledge Base, FAQ, Contact Messages
+    Route::resource('kb-categories', Admin\KbCategoryController::class)->except('show');
+    Route::resource('kb-articles',   Admin\KbArticleController::class)->except('show');
+    Route::resource('faqs',          Admin\FaqController::class)->except('show');
+    Route::get('/contact-messages',              [Admin\ContactMessageController::class, 'index'])->name('contact-messages.index');
+    Route::get('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class, 'show'])->name('contact-messages.show');
+    Route::delete('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
 
     // Settings
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');

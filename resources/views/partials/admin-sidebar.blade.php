@@ -122,6 +122,28 @@
     </div>
 </div>
 
+{{-- Content (dropdown) --}}
+@php
+    $contentActive = request()->routeIs('admin.kb-categories*', 'admin.kb-articles*', 'admin.faqs*', 'admin.contact-messages*');
+@endphp
+<div x-data="{ open: {{ $contentActive ? 'true' : 'false' }} }">
+    <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition {{ $contentActive ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
+        <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/>
+            </svg>
+            {{ __('navigation.content') }}
+        </span>
+        <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </button>
+    <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1">
+        <a href="{{ route('admin.kb-categories.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.kb-categories.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('kb.categories') }}</a>
+        <a href="{{ route('admin.kb-articles.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.kb-articles.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('kb.articles') }}</a>
+        <a href="{{ route('admin.faqs.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.faqs.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('faq.title') }}</a>
+        <a href="{{ route('admin.contact-messages.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.contact-messages.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('contact.inbox') }}</a>
+    </div>
+</div>
+
 {{-- Reports --}}
 @staffcan('reports.view')
 <x-sidebar-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports*')">

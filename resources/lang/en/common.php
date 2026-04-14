@@ -69,6 +69,7 @@ return [
     'type'        => 'Type',
     'group'       => 'Group',
     'visible'     => 'Visible',
+    'hidden'      => 'Hidden',
 
     // Billing / commerce
     'client'      => 'Client',

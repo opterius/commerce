@@ -78,6 +78,12 @@ return [
     'portal_show_products_help'      => 'Display available hosting plans and services.',
     'portal_show_domain_search'      => 'Domain Search',
     'portal_show_domain_search_help' => 'Show a domain availability search bar.',
+    'portal_show_kb'                 => 'Knowledge Base',
+    'portal_show_kb_help'            => 'Enable the public /kb pages (categories, articles, search).',
+    'portal_show_faq'                => 'FAQ',
+    'portal_show_faq_help'           => 'Enable the public /faq page.',
+    'portal_show_contact'            => 'Contact Page',
+    'portal_show_contact_help'       => 'Enable the public /contact page and form submissions.',
 
     // Billing
     'billing'                    => 'Billing',

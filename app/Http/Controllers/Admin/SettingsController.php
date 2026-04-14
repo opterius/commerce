@@ -170,7 +170,10 @@ class SettingsController extends Controller
             Setting::set($field, $request->input($field, ''), 'portal');
         }
 
-        foreach (['portal_show_hero', 'portal_show_products', 'portal_show_domain_search'] as $field) {
+        foreach ([
+            'portal_show_hero', 'portal_show_products', 'portal_show_domain_search',
+            'portal_show_kb', 'portal_show_faq', 'portal_show_contact',
+        ] as $field) {
             Setting::set($field, $request->boolean($field) ? '1' : '0', 'portal');
         }
 

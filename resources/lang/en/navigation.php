@@ -24,6 +24,7 @@ return [
     'domains'           => 'Domains',
     'tld_manager'       => 'TLD Manager',
 
+    'content'          => 'Content',
     'reports'          => 'Reports',
     'service_upgrades' => 'Plan Changes',
     'two_factor_auth'  => 'Two-Factor Authentication',

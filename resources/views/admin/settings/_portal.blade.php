@@ -94,9 +94,12 @@
         <div class="space-y-3">
             @php
                 $sections = [
-                    ['key' => 'portal_show_hero',          'label' => __('settings.portal_show_hero'),          'desc' => __('settings.portal_show_hero_help')],
-                    ['key' => 'portal_show_products',       'label' => __('settings.portal_show_products'),       'desc' => __('settings.portal_show_products_help')],
-                    ['key' => 'portal_show_domain_search',  'label' => __('settings.portal_show_domain_search'),  'desc' => __('settings.portal_show_domain_search_help')],
+                    ['key' => 'portal_show_hero',          'label' => __('settings.portal_show_hero'),          'desc' => __('settings.portal_show_hero_help'),          'default' => '1'],
+                    ['key' => 'portal_show_products',       'label' => __('settings.portal_show_products'),       'desc' => __('settings.portal_show_products_help'),       'default' => '1'],
+                    ['key' => 'portal_show_domain_search',  'label' => __('settings.portal_show_domain_search'),  'desc' => __('settings.portal_show_domain_search_help'),  'default' => '0'],
+                    ['key' => 'portal_show_kb',             'label' => __('settings.portal_show_kb'),             'desc' => __('settings.portal_show_kb_help'),             'default' => '0'],
+                    ['key' => 'portal_show_faq',            'label' => __('settings.portal_show_faq'),            'desc' => __('settings.portal_show_faq_help'),            'default' => '0'],
+                    ['key' => 'portal_show_contact',        'label' => __('settings.portal_show_contact'),        'desc' => __('settings.portal_show_contact_help'),        'default' => '0'],
                 ];
             @endphp
 
@@ -108,7 +111,7 @@
                             type="checkbox"
                             name="{{ $section['key'] }}"
                             value="1"
-                            {{ ($settings[$section['key']] ?? '1') === '1' ? 'checked' : '' }}
+                            {{ ($settings[$section['key']] ?? $section['default']) === '1' ? 'checked' : '' }}
                             class="rounded border-gray-300 text-indigo-600"
                         >
                     </div>
