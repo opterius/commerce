@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Gateways\GatewayRegistry;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Services\InvoicePdfService;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 
@@ -36,6 +37,12 @@ class InvoiceController extends Controller
         $invoice->load(['items', 'payments']);
 
         return view('client.invoices.show', compact('invoice'));
+    }
+
+    public function downloadPdf(Invoice $invoice, InvoicePdfService $pdf)
+    {
+        abort_if($invoice->client_id !== auth('client')->id(), 403);
+        return $pdf->download($invoice);
     }
 
     public function pay(Invoice $invoice, ?string $gatewaySlug = null)

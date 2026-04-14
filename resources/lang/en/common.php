@@ -70,6 +70,8 @@ return [
     'group'       => 'Group',
     'visible'     => 'Visible',
     'hidden'      => 'Hidden',
+    'currency'    => 'Currency',
+    'qty'         => 'Qty',
 
     // Billing / commerce
     'client'      => 'Client',

@@ -22,6 +22,9 @@
                 <x-badge :color="$statusColor">{{ __('invoices.status_' . $invoice->status) }}</x-badge>
             </div>
             <div class="flex items-center gap-2">
+                <a href="{{ route('admin.invoices.pdf', $invoice) }}" class="btn-secondary">
+                    {{ __('invoices.download_pdf') }}
+                </a>
                 @if ($invoice->status !== 'paid' && $invoice->status !== 'cancelled')
                     <form method="POST" action="{{ route('admin.invoices.send', $invoice) }}" class="inline">
                         @csrf

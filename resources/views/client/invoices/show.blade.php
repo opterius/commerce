@@ -20,11 +20,16 @@
                 @endphp
                 <x-badge :color="$statusColor">{{ __('invoices.status_' . $invoice->status) }}</x-badge>
             </div>
-            @if ($invoice->amount_due > 0)
-                <a href="{{ route('client.invoices.pay', $invoice) }}">
-                    <x-button type="button">{{ __('invoices.pay_now') }}</x-button>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('client.invoices.pdf', $invoice) }}" class="btn-secondary">
+                    {{ __('invoices.download_pdf') }}
                 </a>
-            @endif
+                @if ($invoice->amount_due > 0)
+                    <a href="{{ route('client.invoices.pay', $invoice) }}">
+                        <x-button type="button">{{ __('invoices.pay_now') }}</x-button>
+                    </a>
+                @endif
+            </div>
         </div>
     </x-slot>
 

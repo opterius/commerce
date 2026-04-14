@@ -29,6 +29,7 @@ class OrderService
         ?string $promoCode        = null,
     ): Order {
         $product->load(['pricing', 'configurableOptionGroups.options.values.pricing']);
+        $client->loadMissing('group.pricing');
 
         $currencyCode = $this->resolveClientCurrency($client);
 
@@ -46,6 +47,20 @@ class OrderService
 
         if (! $pricing) {
             throw new \RuntimeException("Product is not available for the billing cycle '{$cycle}'.");
+        }
+
+        // ── Client group pricing override (bypasses group discount if set) ──
+        $basePrice    = (int) $pricing->price;
+        $baseSetupFee = (int) $pricing->setup_fee;
+        $usedOverride = false;
+
+        if ($client->group) {
+            $override = $client->group->priceOverride($product->id, $currencyCode, $cycle);
+            if ($override) {
+                $basePrice    = (int) $override->price;
+                $baseSetupFee = (int) $override->setup_fee;
+                $usedOverride = true;
+            }
         }
 
         // ── Resolve configurable option prices ────────────────────────────────
@@ -66,29 +81,36 @@ class OrderService
             ];
         }
 
+        // ── Group discount (applied only when no per-product override) ───────
+        $groupDiscount = 0;
+        if (! $usedOverride && $client->group && $client->group->discount_percent > 0) {
+            $discountable  = $basePrice + $optionTotal;
+            $groupDiscount = (int) round($discountable * ($client->group->discount_percent / 10000));
+        }
+
         // ── Promo code ────────────────────────────────────────────────────────
-        $discount   = 0;
+        $discount   = $groupDiscount;
         $promoModel = null;
 
         if ($promoCode) {
             $promoModel = PromoCode::where('code', strtoupper(trim($promoCode)))->first();
 
             if ($promoModel && $promoModel->isValid() && $this->promoAppliesToProduct($promoModel, $product)) {
-                $base     = $pricing->price + $optionTotal;
-                $discount = $this->calculateDiscount($base, $promoModel);
+                $base     = max(0, ($basePrice + $optionTotal) - $groupDiscount);
+                $discount = $groupDiscount + $this->calculateDiscount($base, $promoModel);
             } else {
                 $promoModel = null; // invalid — don't attach
             }
         }
 
         // ── Totals ────────────────────────────────────────────────────────────
-        $subtotal = $pricing->price + $pricing->setup_fee + $optionTotal;
+        $subtotal = $basePrice + $baseSetupFee + $optionTotal;
         $total    = max(0, $subtotal - $discount);
 
         // ── Persist ───────────────────────────────────────────────────────────
         return DB::transaction(function () use (
             $client, $product, $cycle, $currencyCode,
-            $pricing, $configOptions, $promoModel,
+            $basePrice, $baseSetupFee, $configOptions, $promoModel,
             $subtotal, $discount, $total
         ) {
             $order = Order::create([
@@ -107,8 +129,8 @@ class OrderService
                 'product_id'     => $product->id,
                 'billing_cycle'  => $cycle,
                 'qty'            => 1,
-                'price'          => $pricing->price,
-                'setup_fee'      => $pricing->setup_fee,
+                'price'          => $basePrice,
+                'setup_fee'      => $baseSetupFee,
                 'config_options' => $configOptions ?: null,
             ]);
 

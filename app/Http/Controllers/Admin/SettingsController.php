@@ -37,6 +37,7 @@ class SettingsController extends Controller
             'registrar'  => $this->updateRegistrar($request),
             'gateways'   => $this->updateGateways($request),
             'portal'     => $this->updatePortal($request),
+            'invoices'   => $this->updateInvoices($request),
             default => abort(404),
         };
 
@@ -190,6 +191,14 @@ class SettingsController extends Controller
                 ])->values()->all();
             Setting::set('portal_nav_links', json_encode($links), 'portal');
         }
+    }
+
+    private function updateInvoices(Request $request): void
+    {
+        Setting::set('invoice_show_logo',    $request->boolean('invoice_show_logo') ? '1' : '0', 'invoices');
+        Setting::set('invoice_accent_color', $request->input('invoice_accent_color', ''), 'invoices');
+        Setting::set('invoice_footer_text',  $request->input('invoice_footer_text', ''), 'invoices');
+        Setting::set('invoice_payment_terms',$request->input('invoice_payment_terms', ''), 'invoices');
     }
 
     public function deleteCurrency(Currency $currency)

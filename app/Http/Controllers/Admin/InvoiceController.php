@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Services\ActivityLogger;
+use App\Services\InvoicePdfService;
 use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,11 @@ class InvoiceController extends Controller
         $invoices = $query->paginate(config('commerce.pagination', 25))->withQueryString();
 
         return view('admin.invoices.index', compact('invoices'));
+    }
+
+    public function downloadPdf(Invoice $invoice, InvoicePdfService $pdf)
+    {
+        return $pdf->download($invoice);
     }
 
     public function show(Invoice $invoice)

@@ -52,8 +52,21 @@ return [
     'nav_portal'     => 'Client Portal',
     'nav_currencies' => 'Currencies',
     'nav_billing'    => 'Billing',
+    'nav_invoices'   => 'Invoice PDF',
     'nav_tickets'    => 'Tickets',
     'nav_registrar'  => 'Registrar',
+
+    // Invoice PDF customisation
+    'invoice_customisation'        => 'Invoice PDF Customisation',
+    'invoice_customisation_help'   => 'Configure how generated PDF invoices look for your clients.',
+    'invoice_show_logo'            => 'Show logo on invoices',
+    'invoice_show_logo_help'       => 'Uses the logo from the Branding settings. When disabled, the company name is shown as text instead.',
+    'invoice_accent_color'         => 'Accent Colour',
+    'invoice_accent_color_help'    => 'Used for the invoice tag and total line. Leave blank to use the brand primary colour.',
+    'invoice_payment_terms'        => 'Payment Terms',
+    'invoice_payment_terms_help'   => 'Shown below the totals. Example: "Payment is due within 7 days."',
+    'invoice_footer_text'          => 'Footer Text',
+    'invoice_footer_text_help'     => 'Appears centered at the bottom of each invoice. A nice place for a thank-you note.',
 
     // Portal builder
     'portal_appearance'              => 'Appearance',

@@ -33,6 +33,30 @@ return [
     'status' => 'Status',
     'no_group' => 'No Group',
 
+    // Client groups
+    'client_groups'         => 'Client Groups',
+    'create_group'          => 'Create Group',
+    'edit_group'            => 'Edit Group',
+    'no_groups'             => 'No client groups yet.',
+    'group_details'         => 'Group Details',
+    'group_color'           => 'Label Color',
+    'group_created'         => 'Client group created.',
+    'group_updated'         => 'Client group updated.',
+    'group_deleted'         => 'Client group deleted.',
+    'delete_group_warning'  => 'Clients assigned to this group will keep their assignment until reassigned.',
+    'clients_count'         => 'Clients',
+    'discount'              => 'Discount',
+    'discount_percent'      => 'Discount (%)',
+    'discount_percent_help' => 'Percentage off every order from this group. Leave at 0 for no discount.',
+
+    // Price overrides
+    'price_overrides'         => 'Per-product price overrides',
+    'price_overrides_help'    => 'Set specific prices for this group on selected products, currencies, and billing cycles. Overrides bypass the group discount above for those products.',
+    'no_price_overrides'      => 'No per-product overrides yet.',
+    'add_price_override'      => 'Add price override',
+    'price_override_saved'    => 'Price override saved.',
+    'price_override_removed'  => 'Price override removed.',
+
     // Statuses
     'status_active' => 'Active',
     'status_inactive' => 'Inactive',

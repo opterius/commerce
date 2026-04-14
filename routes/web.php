@@ -72,6 +72,11 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
 
     // Clients
     Route::resource('clients', Admin\ClientController::class);
+
+    // Client Groups + per-product price overrides
+    Route::resource('client-groups', Admin\ClientGroupController::class)->except('show');
+    Route::post('/client-groups/{clientGroup}/prices', [Admin\ClientGroupController::class, 'storePrice'])->name('client-groups.prices.store');
+    Route::delete('/client-groups/{clientGroup}/prices/{price}', [Admin\ClientGroupController::class, 'destroyPrice'])->name('client-groups.prices.destroy');
     Route::post('/clients/{client}/notes', [Admin\ClientNoteController::class, 'store'])->name('clients.notes.store');
     Route::delete('/clients/{client}/notes/{note}', [Admin\ClientNoteController::class, 'destroy'])->name('clients.notes.destroy');
     Route::post('/clients/{client}/contacts', [Admin\ClientContactController::class, 'store'])->name('clients.contacts.store');
@@ -114,6 +119,7 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     // Invoices
     Route::get('/invoices', [Admin\InvoiceController::class, 'index'])->name('invoices.index');
     Route::get('/invoices/{invoice}', [Admin\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/pdf', [Admin\InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
     Route::post('/invoices/{invoice}/void', [Admin\InvoiceController::class, 'void'])->name('invoices.void');
     Route::post('/invoices/{invoice}/send', [Admin\InvoiceController::class, 'send'])->name('invoices.send');
     Route::post('/invoices/{invoice}/manual-payment', [Admin\InvoiceController::class, 'manualPayment'])->name('invoices.manual-payment');
@@ -208,6 +214,7 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     // Invoices
     Route::get('/invoices', [Client\InvoiceController::class, 'index'])->name('invoices.index');
     Route::get('/invoices/{invoice}', [Client\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/pdf', [Client\InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
     Route::get('/invoices/{invoice}/pay/{gateway?}', [Client\InvoiceController::class, 'pay'])->name('invoices.pay');
     Route::post('/invoices/{invoice}/pay/{gateway}', [Client\InvoiceController::class, 'processPayment'])->name('invoices.process-payment');
 
