@@ -8,16 +8,31 @@
 
     // Auto-built nav links for enabled content sections
     $autoLinks = [];
-    if (($portalSettings['portal_show_kb']      ?? '0') === '1') {
-        $autoLinks[] = ['label' => __('kb.portal_title'),      'url' => url('/kb'),      'open_new' => false];
+    if (($portalSettings['portal_show_kb']            ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('kb.portal_title'),            'url' => url('/kb'),            'open_new' => false];
     }
-    if (($portalSettings['portal_show_faq']     ?? '0') === '1') {
-        $autoLinks[] = ['label' => __('faq.portal_title'),     'url' => url('/faq'),     'open_new' => false];
+    if (($portalSettings['portal_show_faq']           ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('faq.portal_title'),           'url' => url('/faq'),           'open_new' => false];
     }
-    if (($portalSettings['portal_show_contact'] ?? '0') === '1') {
-        $autoLinks[] = ['label' => __('contact.portal_title'), 'url' => url('/contact'), 'open_new' => false];
+    if (($portalSettings['portal_show_announcements'] ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('announcements.portal_title'), 'url' => url('/announcements'), 'open_new' => false];
+    }
+    if (($portalSettings['portal_show_status']        ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('announcements.status_page'),  'url' => url('/status'),        'open_new' => false];
+    }
+    if (($portalSettings['portal_show_contact']       ?? '0') === '1') {
+        $autoLinks[] = ['label' => __('contact.portal_title'),       'url' => url('/contact'),       'open_new' => false];
     }
     $allNavLinks = array_merge($navLinks, $autoLinks);
+
+    // Featured announcement banner (shown across the portal)
+    $bannerAnnouncements = [];
+    if (($portalSettings['portal_show_announcements'] ?? '0') === '1') {
+        $bannerAnnouncements = \App\Models\Announcement::active()->public()->featured()
+            ->orderByDesc('published_at')
+            ->limit(2)
+            ->get();
+    }
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -100,6 +115,34 @@
     </style>
 </head>
 <body class="font-sans antialiased bg-gray-50" style="display:flex; flex-direction:column; min-height:100vh;">
+
+    {{-- Featured announcement banner --}}
+    @if (! empty($bannerAnnouncements) && count($bannerAnnouncements) > 0)
+        @php
+            $bannerStyles = [
+                'info'     => ['bg' => '#eff6ff', 'text' => '#1e40af', 'accent' => '#3b82f6'],
+                'success'  => ['bg' => '#ecfdf5', 'text' => '#065f46', 'accent' => '#10b981'],
+                'warning'  => ['bg' => '#fffbeb', 'text' => '#92400e', 'accent' => '#f59e0b'],
+                'critical' => ['bg' => '#fef2f2', 'text' => '#991b1b', 'accent' => '#ef4444'],
+            ];
+        @endphp
+        @foreach ($bannerAnnouncements as $ann)
+            @php $bs = $bannerStyles[$ann->priority] ?? $bannerStyles['info']; @endphp
+            <div style="background-color: {{ $bs['bg'] }}; color: {{ $bs['text'] }}; border-bottom: 1px solid rgba(0,0,0,.04);">
+                <div class="max-w-6xl mx-auto" style="padding: .75rem 1.5rem; display:flex; align-items:center; gap:.75rem; font-size: .875rem;">
+                    <span style="display:inline-block; width:.5rem; height:.5rem; border-radius:9999px; background-color: {{ $bs['accent'] }}; flex-shrink:0;"></span>
+                    <span style="flex:1; min-width:0;">
+                        <strong>{{ $ann->title }}</strong>
+                        <span style="opacity:.8; margin-left:.5rem;">{{ Str::limit($ann->content, 120) }}</span>
+                    </span>
+                    <a href="{{ route('portal.announcement', $ann) }}"
+                       style="font-weight:600; text-decoration: underline; white-space: nowrap; color: inherit;">
+                        {{ __('announcements.read_more') }}
+                    </a>
+                </div>
+            </div>
+        @endforeach
+    @endif
 
     {{-- Sticky nav --}}
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">

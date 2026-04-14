@@ -100,6 +100,8 @@
                     ['key' => 'portal_show_kb',             'label' => __('settings.portal_show_kb'),             'desc' => __('settings.portal_show_kb_help'),             'default' => '0'],
                     ['key' => 'portal_show_faq',            'label' => __('settings.portal_show_faq'),            'desc' => __('settings.portal_show_faq_help'),            'default' => '0'],
                     ['key' => 'portal_show_contact',        'label' => __('settings.portal_show_contact'),        'desc' => __('settings.portal_show_contact_help'),        'default' => '0'],
+                    ['key' => 'portal_show_announcements',  'label' => __('settings.portal_show_announcements'),  'desc' => __('settings.portal_show_announcements_help'),  'default' => '0'],
+                    ['key' => 'portal_show_status',         'label' => __('settings.portal_show_status'),         'desc' => __('settings.portal_show_status_help'),         'default' => '0'],
                 ];
             @endphp
 

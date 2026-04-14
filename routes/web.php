@@ -28,6 +28,13 @@ Route::get('/faq', [PortalController::class, 'faq'])->name('portal.faq');
 Route::get('/contact',  [PortalController::class, 'contact'])->name('portal.contact');
 Route::post('/contact', [PortalController::class, 'contactSubmit'])->name('portal.contact.submit');
 
+// Announcements
+Route::get('/announcements',                    [PortalController::class, 'announcements'])->name('portal.announcements');
+Route::get('/announcements/{announcement:slug}', [PortalController::class, 'announcement'])->name('portal.announcement');
+
+// Status page
+Route::get('/status', [PortalController::class, 'status'])->name('portal.status');
+
 // ── Staff Auth ───────────────────────────────────────────────────────────────
 Route::get('/admin/login', [Auth\StaffLoginController::class, 'showLoginForm'])->name('staff.login');
 Route::post('/admin/login', [Auth\StaffLoginController::class, 'login']);
@@ -162,6 +169,8 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     Route::get('/contact-messages',              [Admin\ContactMessageController::class, 'index'])->name('contact-messages.index');
     Route::get('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class, 'show'])->name('contact-messages.show');
     Route::delete('/contact-messages/{contactMessage}', [Admin\ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
+    Route::resource('announcements',    Admin\AnnouncementController::class)->except('show');
+    Route::resource('service-statuses', Admin\ServiceStatusController::class)->except('show');
 
     // Settings
     Route::get('/settings/{category?}', [Admin\SettingsController::class, 'index'])->name('settings');

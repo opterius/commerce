@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\ContactMessage;
 use App\Models\Currency;
 use App\Models\Faq;
 use App\Models\KbArticle;
 use App\Models\KbCategory;
 use App\Models\ProductGroup;
+use App\Models\ServiceStatus;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
@@ -123,6 +125,46 @@ class PortalController extends Controller
 
         return redirect()->route('portal.contact')
             ->with('success', __('contact.message_sent'));
+    }
+
+    // ── Announcements ──────────────────────────────────────────────────────────
+
+    public function announcements()
+    {
+        $this->assertEnabled('portal_show_announcements');
+
+        $announcements = Announcement::active()->public()
+            ->orderByDesc('published_at')
+            ->paginate(15);
+
+        return view('portal.announcements.index', compact('announcements'));
+    }
+
+    public function announcement(Announcement $announcement)
+    {
+        $this->assertEnabled('portal_show_announcements');
+        abort_if(! $announcement->show_public, 404);
+        abort_if(! $announcement->published_at || $announcement->published_at->isFuture(), 404);
+        abort_if($announcement->expires_at && $announcement->expires_at->isPast(), 404);
+
+        return view('portal.announcements.show', ['announcement' => $announcement]);
+    }
+
+    // ── Status page ────────────────────────────────────────────────────────────
+
+    public function status()
+    {
+        $this->assertEnabled('portal_show_status');
+
+        $components     = ServiceStatus::orderBy('sort_order')->orderBy('id')->get();
+        $overall        = ServiceStatus::overallStatus();
+        $recentIncidents = Announcement::active()->public()
+            ->whereIn('priority', ['warning', 'critical'])
+            ->orderByDesc('published_at')
+            ->limit(5)
+            ->get();
+
+        return view('portal.status', compact('components', 'overall', 'recentIncidents'));
     }
 
     private function assertEnabled(string $key): void

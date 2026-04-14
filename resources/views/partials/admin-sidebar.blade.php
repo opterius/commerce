@@ -124,7 +124,7 @@
 
 {{-- Content (dropdown) --}}
 @php
-    $contentActive = request()->routeIs('admin.kb-categories*', 'admin.kb-articles*', 'admin.faqs*', 'admin.contact-messages*');
+    $contentActive = request()->routeIs('admin.kb-categories*', 'admin.kb-articles*', 'admin.faqs*', 'admin.contact-messages*', 'admin.announcements*', 'admin.service-statuses*');
 @endphp
 <div x-data="{ open: {{ $contentActive ? 'true' : 'false' }} }">
     <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition {{ $contentActive ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
@@ -137,6 +137,8 @@
         <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </button>
     <div x-show="open" x-cloak class="mt-1 ml-6 space-y-1">
+        <a href="{{ route('admin.announcements.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.announcements.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('announcements.title') }}</a>
+        <a href="{{ route('admin.service-statuses.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.service-statuses.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('announcements.status_page') }}</a>
         <a href="{{ route('admin.kb-categories.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.kb-categories.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('kb.categories') }}</a>
         <a href="{{ route('admin.kb-articles.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.kb-articles.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('kb.articles') }}</a>
         <a href="{{ route('admin.faqs.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.faqs.*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('faq.title') }}</a>

@@ -56,6 +56,38 @@
         </div>
     </div>
 
+    {{-- Announcements --}}
+    @if (isset($announcements) && $announcements->isNotEmpty())
+        @php
+            $priorityStyles = [
+                'info'     => ['bg' => 'bg-blue-50',  'border' => 'border-blue-200',  'icon' => 'text-blue-500',  'title' => 'text-blue-900'],
+                'success'  => ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'icon' => 'text-green-500', 'title' => 'text-green-900'],
+                'warning'  => ['bg' => 'bg-amber-50', 'border' => 'border-amber-200', 'icon' => 'text-amber-500', 'title' => 'text-amber-900'],
+                'critical' => ['bg' => 'bg-red-50',   'border' => 'border-red-200',   'icon' => 'text-red-500',   'title' => 'text-red-900'],
+            ];
+        @endphp
+        <div class="mb-8">
+            <h3 class="text-base font-semibold text-gray-800 mb-4">{{ __('announcements.title') }}</h3>
+            <div class="space-y-3">
+                @foreach ($announcements as $ann)
+                    @php $s = $priorityStyles[$ann->priority] ?? $priorityStyles['info']; @endphp
+                    <div class="{{ $s['bg'] }} {{ $s['border'] }} border rounded-xl p-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 {{ $s['icon'] }} flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/>
+                            </svg>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold {{ $s['title'] }}">{{ $ann->title }}</p>
+                                <p class="mt-1 text-sm text-gray-600 leading-relaxed" style="white-space: pre-wrap;">{{ Str::limit($ann->content, 200) }}</p>
+                                <p class="mt-2 text-xs text-gray-400">{{ $ann->published_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Quick links --}}
     <div class="bg-white rounded-xl shadow-sm p-6">
         <h3 class="text-base font-semibold text-gray-800 mb-4">{{ __('common.quick_links') }}</h3>

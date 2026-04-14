@@ -84,6 +84,10 @@ return [
     'portal_show_faq_help'           => 'Enable the public /faq page.',
     'portal_show_contact'            => 'Contact Page',
     'portal_show_contact_help'       => 'Enable the public /contact page and form submissions.',
+    'portal_show_announcements'      => 'Announcements',
+    'portal_show_announcements_help' => 'Enable the public /announcements page and show featured announcements as a banner.',
+    'portal_show_status'             => 'Status Page',
+    'portal_show_status_help'        => 'Enable the public /status page showing component states and recent incidents.',
 
     // Billing
     'billing'                    => 'Billing',
