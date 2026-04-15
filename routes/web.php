@@ -35,6 +35,9 @@ Route::get('/announcements/{announcement:slug}', [PortalController::class, 'anno
 // Status page
 Route::get('/status', [PortalController::class, 'status'])->name('portal.status');
 
+// Domain search (public — no auth required)
+Route::get('/domain-search', [PortalController::class, 'domainSearch'])->name('portal.domain.search');
+
 // ── Staff Auth ───────────────────────────────────────────────────────────────
 Route::get('/admin/login', [Auth\StaffLoginController::class, 'showLoginForm'])->name('staff.login');
 Route::post('/admin/login', [Auth\StaffLoginController::class, 'login']);
@@ -192,6 +195,11 @@ Route::prefix('admin')->middleware(['auth:staff', 'staff'])->name('admin.')->gro
     Route::post('/service-upgrades/{upgradeRequest}/approve', [Admin\ServiceUpgradeController::class, 'approve'])->name('service-upgrades.approve');
     Route::post('/service-upgrades/{upgradeRequest}/reject', [Admin\ServiceUpgradeController::class, 'reject'])->name('service-upgrades.reject');
 
+    // Service Cancellation Requests
+    Route::get('/service-cancellations', [Admin\ServiceCancellationController::class, 'index'])->name('service-cancellations.index');
+    Route::post('/service-cancellations/{cancellationRequest}/approve', [Admin\ServiceCancellationController::class, 'approve'])->name('service-cancellations.approve');
+    Route::post('/service-cancellations/{cancellationRequest}/reject', [Admin\ServiceCancellationController::class, 'reject'])->name('service-cancellations.reject');
+
     // Staff 2FA profile
     Route::get('/profile/two-factor', [Auth\StaffTwoFactorController::class, 'show'])->name('two-factor.show');
     Route::post('/profile/two-factor/enable', [Auth\StaffTwoFactorController::class, 'enable'])->name('two-factor.enable');
@@ -251,6 +259,15 @@ Route::prefix('client')->middleware(['auth:client', 'client'])->name('client.')-
     // Service Upgrades / Downgrades
     Route::get('/services/{service}/upgrade', [Client\ServiceUpgradeController::class, 'show'])->name('services.upgrade');
     Route::post('/services/{service}/upgrade', [Client\ServiceUpgradeController::class, 'store'])->name('services.upgrade.store');
+
+    // Service Cancellation Requests
+    Route::get('/services/{service}/cancel', [Client\ServiceCancellationController::class, 'create'])->name('services.cancel');
+    Route::post('/services/{service}/cancel', [Client\ServiceCancellationController::class, 'store'])->name('services.cancel.store');
+
+    // API Tokens
+    Route::get('/api-tokens', [Client\PersonalAccessTokenController::class, 'index'])->name('api-tokens.index');
+    Route::post('/api-tokens', [Client\PersonalAccessTokenController::class, 'store'])->name('api-tokens.store');
+    Route::delete('/api-tokens/{personalAccessToken}', [Client\PersonalAccessTokenController::class, 'destroy'])->name('api-tokens.destroy');
 
     // Client 2FA settings
     Route::get('/security/two-factor', [Client\ClientTwoFactorController::class, 'show'])->name('two-factor.show');

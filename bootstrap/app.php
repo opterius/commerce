@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
@@ -14,7 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'staff'     => \App\Http\Middleware\StaffMiddleware::class,
             'staff.can' => \App\Http\Middleware\StaffCan::class,
-            'client' => \App\Http\Middleware\ClientMiddleware::class,
+            'client'    => \App\Http\Middleware\ClientMiddleware::class,
+            'api.token' => \App\Http\Middleware\ApiTokenAuth::class,
         ]);
 
         $middleware->web(append: [

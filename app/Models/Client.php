@@ -110,4 +110,14 @@ class Client extends Authenticatable
     {
         return $this->hasMany(Ticket::class);
     }
+
+    public function personalAccessTokens(): HasMany
+    {
+        return $this->hasMany(PersonalAccessToken::class);
+    }
+
+    public function cancellationRequests(): HasMany
+    {
+        return $this->hasMany(ServiceCancellationRequest::class);
+    }
 }

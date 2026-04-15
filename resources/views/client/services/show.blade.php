@@ -23,7 +23,7 @@
         </div>
     </x-slot>
 
-    <div class="max-w-2xl">
+    <div class="max-w-2xl space-y-4">
         <div class="bg-white rounded-xl shadow-sm p-6">
             <h3 class="text-base font-semibold text-gray-800 mb-5">{{ __('common.details') }}</h3>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -78,5 +78,29 @@
                 </div>
             @endif
         </div>
+
+        {{-- Cancel service --}}
+        @if (! in_array($service->status, ['cancelled', 'terminated']))
+            @php
+                $hasPending = \App\Models\ServiceCancellationRequest::where('service_id', $service->id)
+                    ->where('status', 'pending')->exists();
+            @endphp
+            @if ($hasPending)
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+                    {{ __('cancellations.already_requested') }}
+                </div>
+            @else
+                <div class="bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-800">{{ __('cancellations.request_cancellation') }}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ __('cancellations.cancel_type') }}</p>
+                    </div>
+                    <a href="{{ route('client.services.cancel', $service) }}" class="btn-danger text-sm">
+                        {{ __('cancellations.request_cancellation') }}
+                    </a>
+                </div>
+            @endif
+        @endif
+
     </div>
 </x-client-layout>

@@ -49,7 +49,7 @@
 
 {{-- Billing (dropdown) --}}
 @php
-    $billingActive = request()->routeIs('admin.orders*', 'admin.services*', 'admin.invoices*', 'admin.payments*', 'admin.tax-rules*');
+    $billingActive = request()->routeIs('admin.orders*', 'admin.services*', 'admin.invoices*', 'admin.payments*', 'admin.tax-rules*', 'admin.service-cancellations*', 'admin.service-upgrades*');
 @endphp
 <div x-data="{ open: {{ $billingActive ? 'true' : 'false' }} }">
     <button @click="open = !open" class="flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg transition {{ $billingActive ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }}">
@@ -67,6 +67,8 @@
         <a href="{{ route('admin.invoices.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.invoices*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('invoices.invoices') }}</a>
         <a href="{{ route('admin.payments.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.payments*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.payments') }}</a>
         <a href="{{ route('admin.tax-rules.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.tax-rules*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.tax_rules') }}</a>
+        <a href="{{ route('admin.service-upgrades.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.service-upgrades*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.service_upgrades') }}</a>
+        <a href="{{ route('admin.service-cancellations.index') }}" class="block px-3 py-2 text-sm rounded-lg {{ request()->routeIs('admin.service-cancellations*') ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-white' }}">{{ __('navigation.cancellations') }}</a>
     </div>
 </div>
 

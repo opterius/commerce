@@ -98,7 +98,7 @@
                 {{ __('portal.domain_search_btn') }}
             </button>
         </div>
-        <form id="domain-search-form" method="GET" action="{{ route('client.domains.search') }}"></form>
+        <form id="domain-search-form" method="GET" action="{{ route('portal.domain.search') }}"></form>
     </div>
 </section>
 @endif

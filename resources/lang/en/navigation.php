@@ -27,6 +27,7 @@ return [
     'content'          => 'Content',
     'reports'          => 'Reports',
     'service_upgrades' => 'Plan Changes',
+    'cancellations'    => 'Cancellations',
     'two_factor_auth'  => 'Two-Factor Authentication',
 
     // Client portal
@@ -39,4 +40,5 @@ return [
     'my_profile'  => 'My Profile',
     'account'     => 'Account',
     'profile'     => 'Profile',
+    'api_tokens'  => 'API Tokens',
 ];

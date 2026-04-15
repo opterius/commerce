@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use App\Models\ContactMessage;
 use App\Models\Currency;
+use App\Models\DomainTld;
 use App\Models\Faq;
 use App\Models\KbArticle;
 use App\Models\KbCategory;
 use App\Models\ProductGroup;
 use App\Models\ServiceStatus;
 use App\Models\Setting;
+use App\Services\RegistrarService;
 use Illuminate\Http\Request;
 
 class PortalController extends Controller
@@ -28,6 +30,43 @@ class PortalController extends Controller
         ->get();
 
         return view('portal.home', compact('groups', 'currency'));
+    }
+
+    // ── Domain Search (public) ─────────────────────────────────────────────────
+
+    public function domainSearch(Request $request)
+    {
+        $this->assertEnabled('portal_show_domain_search');
+
+        $tlds    = DomainTld::where('is_active', true)->orderBy('sort_order')->get();
+        $results = [];
+        $sld     = null;
+        $error   = null;
+
+        if ($request->filled('q')) {
+            $raw = strtolower(trim($request->q));
+            $sld = explode('.', $raw)[0];
+
+            try {
+                $module     = RegistrarService::module();
+                $tldList    = $tlds->pluck('tld')->toArray();
+                $apiResults = $module->checkBulkAvailability($sld, $tldList);
+
+                foreach ($tlds as $tld) {
+                    $check     = $apiResults[$tld->tld] ?? null;
+                    $results[] = [
+                        'tld'         => $tld,
+                        'domain_name' => "{$sld}.{$tld->tld}",
+                        'available'   => $check?->available ?? false,
+                        'error'       => $check?->error ?? '',
+                    ];
+                }
+            } catch (\Throwable $e) {
+                $error = 'Domain search is temporarily unavailable. Please try again later.';
+            }
+        }
+
+        return view('portal.domain-search', compact('tlds', 'results', 'sld', 'error'));
     }
 
     // ── Knowledge Base ─────────────────────────────────────────────────────────
